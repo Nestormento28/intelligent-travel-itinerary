@@ -1,7 +1,4 @@
-export interface SearchTab {
-  id: 'hotel' | 'flights' | 'hotel+flights'
-  label: string
-}
+import type { SearchTab, BudgetConfig, GuestsConfig, ValidationRules, ErrorMessages } from '@/types'
 
 export const SEARCH_TABS: SearchTab[] = [
   { id: 'hotel', label: 'Hotel' },
@@ -9,17 +6,11 @@ export const SEARCH_TABS: SearchTab[] = [
   { id: 'hotel+flights', label: 'Hotel + Flights' }
 ]
 
-export const BUDGET_CONFIG = {
+export const BUDGET_CONFIG: BudgetConfig = {
   min: 0,
   max: 5000,
   step: 100,
   default: 2500
-}
-
-export interface GuestsConfig {
-  min: number
-  max: number
-  default: number
 }
 
 export const GUESTS_CONFIG: GuestsConfig = {
@@ -28,47 +19,11 @@ export const GUESTS_CONFIG: GuestsConfig = {
   default: 1
 }
 
-export interface ValidationRules {
-  minLocationChars: number
-  maxNights: number
-  minNights: number
-  maxExtraInfoChars: number
-}
-
 export const VALIDATION_RULES: ValidationRules = {
   minLocationChars: 4,
   maxNights: 20,
   minNights: 1,
   maxExtraInfoChars: 200
-}
-
-export interface ErrorMessages {
-  origin: {
-    required: string
-    minLength: string
-  }
-  destination: {
-    required: string
-    minLength: string
-  }
-  dates: {
-    required: string
-    flightRequired: string
-    pastDate: string
-    flightPastDate: string
-    minNights: string
-    maxNights: string
-  }
-  budget: {
-    required: string
-    min: string
-    max: string
-  }
-  guests: {
-    required: string
-    min: string
-    max: string
-  }
 }
 
 export const ERROR_MESSAGES: ErrorMessages = {

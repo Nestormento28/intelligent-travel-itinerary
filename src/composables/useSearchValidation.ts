@@ -1,32 +1,6 @@
-import {reactive} from 'vue'
-import {BUDGET_CONFIG, ERROR_MESSAGES, GUESTS_CONFIG, VALIDATION_RULES} from '@/constants/search'
-
-export interface ValidationErrors {
-    origin: string
-    destination: string
-    dates: string
-    budget: string
-    guests: string
-    extraInfo: string
-}
-
-export interface DateRangeData {
-    startDate: string | null
-    endDate: string | null
-    nights: number
-}
-
-export interface FormData {
-    activeTab: 'hotel' | 'flights' | 'hotel+flights'
-    origin: string
-    destination: string
-    flightDateType: 'single' | 'range'
-    singleFlightDate: string | null
-    dateRangeData: DateRangeData
-    budget: number
-    guests: number
-    extraInfo: string
-}
+import { reactive } from 'vue'
+import { BUDGET_CONFIG, ERROR_MESSAGES, GUESTS_CONFIG, VALIDATION_RULES } from '@/constants/search'
+import type { ValidationErrors, FormData } from '@/types'
 
 export function useSearchValidation() {
     const errors = reactive<ValidationErrors>({

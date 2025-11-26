@@ -1,10 +1,7 @@
-import {ref} from 'vue'
-import type {DateRangeData} from './useSearchValidation'
-import {BUDGET_CONFIG, GUESTS_CONFIG} from '@/constants/search'
+import { ref } from 'vue'
+import type { DateRangeData } from '@/types'
+import { BUDGET_CONFIG, GUESTS_CONFIG } from '@/constants/search'
 
-/**
- * Composable para manejar el estado del formulario de búsqueda
- */
 export function useBookingForm() {
     const activeTab = ref<'hotel' | 'flights' | 'hotel+flights'>('hotel')
     const origin = ref<string>('')

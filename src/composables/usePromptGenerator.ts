@@ -1,33 +1,18 @@
-import type {FormData} from './useSearchValidation'
+import type { FormData } from '@/types'
 
-/**
- * Composable for generating search prompts
- */
 export function usePromptGenerator() {
-    /**
-     * Format guest count for prompt
-     */
     const formatGuestText = (guests: number): string => {
         return guests === 1 ? '1 adult' : `${guests} adults`
     }
 
-    /**
-     * Format budget for prompt
-     */
     const formatBudgetText = (budget: number): string => {
         return `a budget of ${budget}€`
     }
 
-    /**
-     * Format extra info for prompt
-     */
     const formatExtraInfoText = (extraInfo: string): string => {
         return extraInfo.trim() ? `. Extra info: ${extraInfo.trim()}` : ''
     }
 
-    /**
-     * Generate a search prompt based on form data
-     */
     const generatePrompt = (formData: FormData): string => {
         const {
             activeTab,
@@ -57,17 +42,11 @@ export function usePromptGenerator() {
             }
         }
 
-        // hotel+flights
         return `I want to book a hotel and flight from ${origin} to ${destination} from ${dateRangeData.startDate} to ${dateRangeData.endDate} for ${guestText} with ${budgetText}${extraInfoText}`
     }
 
-    /**
-     * Send a prompt (currently logs to console)
-     */
     const sendPrompt = (prompt: string): void => {
         console.log(prompt)
-        // TODO: if all good takes to another landing
-        // if not, shows the message in the chat (or not if submitted from the form)
     }
 
     return {
@@ -75,4 +54,3 @@ export function usePromptGenerator() {
         sendPrompt
     }
 }
-

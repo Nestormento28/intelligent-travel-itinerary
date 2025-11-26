@@ -10,9 +10,10 @@ import ExtraInfoInput from '@/components/common/ExtraInfoInput.vue'
 import FlightDatePicker from '@/components/search/FlightDatePicker.vue'
 import DateRangePicker from '@/components/DateRangePicker.vue'
 import { useBookingForm } from '@/composables/useBookingForm'
-import { useSearchValidation, type DateRangeData } from '@/composables/useSearchValidation'
+import { useSearchValidation } from '@/composables/useSearchValidation'
 import { usePromptGenerator } from '@/composables/usePromptGenerator'
 import { SEARCH_TABS } from '@/constants/search'
+import type { DateRangeData } from '@/types'
 
 const {
   activeTab,
