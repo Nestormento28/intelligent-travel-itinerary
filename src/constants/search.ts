@@ -3,13 +3,17 @@
  */
 
 // Tab definitions
-export const SEARCH_TABS = [
+export interface SearchTab {
+  id: 'hotel' | 'flights' | 'hotel+flights'
+  label: string
+}
+
+export const SEARCH_TABS: SearchTab[] = [
   { id: 'hotel', label: 'Hotel' },
   { id: 'flights', label: 'Flights' },
   { id: 'hotel+flights', label: 'Hotel + Flights' }
 ]
 
-// Budget configuration
 export const BUDGET_CONFIG = {
   min: 0,
   max: 5000,
@@ -18,14 +22,27 @@ export const BUDGET_CONFIG = {
 }
 
 // Guest configuration
-export const GUESTS_CONFIG = {
+export interface GuestsConfig {
+  min: number
+  max: number
+  default: number
+}
+
+export const GUESTS_CONFIG: GuestsConfig = {
   min: 1,
   max: 10,
   default: 1
 }
 
 // Validation rules
-export const VALIDATION_RULES = {
+export interface ValidationRules {
+  minLocationChars: number
+  maxNights: number
+  minNights: number
+  maxExtraInfoChars: number
+}
+
+export const VALIDATION_RULES: ValidationRules = {
   minLocationChars: 4,
   maxNights: 20,
   minNights: 1,
@@ -33,7 +50,36 @@ export const VALIDATION_RULES = {
 }
 
 // Error messages
-export const ERROR_MESSAGES = {
+export interface ErrorMessages {
+  origin: {
+    required: string
+    minLength: string
+  }
+  destination: {
+    required: string
+    minLength: string
+  }
+  dates: {
+    required: string
+    flightRequired: string
+    pastDate: string
+    flightPastDate: string
+    minNights: string
+    maxNights: string
+  }
+  budget: {
+    required: string
+    min: string
+    max: string
+  }
+  guests: {
+    required: string
+    min: string
+    max: string
+  }
+}
+
+export const ERROR_MESSAGES: ErrorMessages = {
   origin: {
     required: 'Origin is required',
     minLength: `Origin must be at least ${VALIDATION_RULES.minLocationChars} characters`
@@ -51,13 +97,14 @@ export const ERROR_MESSAGES = {
     maxNights: `Maximum stay is ${VALIDATION_RULES.maxNights} nights`
   },
   budget: {
-    range: `Budget must be between \u20AC${BUDGET_CONFIG.min} and \u20AC${BUDGET_CONFIG.max.toLocaleString()}`
+    required: 'Budget is required',
+    min: `Budget must be at least ${BUDGET_CONFIG.min}`,
+    max: `Budget cannot exceed ${BUDGET_CONFIG.max}`
   },
   guests: {
-    required: `At least ${GUESTS_CONFIG.min} guest is required`,
+    required: 'Number of guests is required',
+    min: `At least ${GUESTS_CONFIG.min} guest is required`,
     max: `Maximum ${GUESTS_CONFIG.max} guests allowed`
-  },
-  extraInfo: {
-    maxLength: `Extra info must be ${VALIDATION_RULES.maxExtraInfoChars} characters or less`
   }
 }
+

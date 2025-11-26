@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { VALIDATION_RULES } from '@/constants/search.js'
+import { VALIDATION_RULES } from '@/constants/search'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 
@@ -20,7 +20,7 @@ const emit = defineEmits<{
 
 const extraInfo = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
+  set: (val: string) => emit('update:modelValue', val)
 })
 
 const maxChars = VALIDATION_RULES.maxExtraInfoChars

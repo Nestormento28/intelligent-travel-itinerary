@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, watch, ref } from 'vue'
 import { CalendarIcon } from 'lucide-vue-next'
 import { RangeCalendar } from '@/components/ui/range-calendar'
@@ -8,18 +8,20 @@ import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { CalendarDate, DateFormatter, getLocalTimeZone, today } from '@internationalized/date'
 
-const props = defineProps({
-  modelValue: {
-    type: Array,
-    default: null
-  },
-  error: {
-    type: Boolean,
-    default: false
-  }
+interface Props {
+  modelValue?: string[] | null
+  error?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: null,
+  error: false
 })
 
-const emit = defineEmits(['update:modelValue', 'update:range'])
+const emit = defineEmits<{
+  'update:modelValue': [value: string[] | null]
+  'update:range': [range: { startDate: string | null; endDate: string | null; nights: number }]
+}>()
 
 const open = ref(false)
 const minDate = today(getLocalTimeZone())
@@ -49,7 +51,7 @@ const dateRange = computed({
 })
 
 // Convertir string "dd/MM/yyyy" a CalendarDate
-const stringToCalendarDate = (dateStr) => {
+const stringToCalendarDate = (dateStr: string): CalendarDate | undefined => {
   if (!dateStr) return undefined
   const parts = dateStr.split('/')
   if (parts.length === 3) {
@@ -62,7 +64,7 @@ const stringToCalendarDate = (dateStr) => {
 }
 
 // Convertir CalendarDate a string "dd/MM/yyyy"
-const calendarDateToString = (calendarDate) => {
+const calendarDateToString = (calendarDate: CalendarDate): string | null => {
   if (!calendarDate) return null
   const day = String(calendarDate.day).padStart(2, '0')
   const month = String(calendarDate.month).padStart(2, '0')
@@ -81,7 +83,7 @@ const numberOfNights = computed(() => {
   // Convertir a timestamp para calcular diferencia
   const startDate = new Date(start.year, start.month - 1, start.day)
   const endDate = new Date(end.year, end.month - 1, end.day)
-  const diffTime = Math.abs(endDate - startDate)
+  const diffTime = Math.abs(endDate.getTime() - startDate.getTime())
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 })
 
@@ -145,4 +147,3 @@ watch(numberOfNights, (nights) => {
     </Badge>
   </div>
 </template>
-

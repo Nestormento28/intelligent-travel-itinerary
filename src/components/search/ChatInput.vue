@@ -1,24 +1,28 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
-const props = defineProps({
-  modelValue: {
-    type: String,
-    default: ''
-  }
+interface Props {
+  modelValue?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: ''
 })
 
-const emit = defineEmits(['update:modelValue', 'submit'])
+const emit = defineEmits<{
+  'update:modelValue': [value: string]
+  'submit': []
+}>()
 
 const message = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
+  set: (val: string) => emit('update:modelValue', val)
 })
 
-const handleSubmit = () => {
+const handleSubmit = (): void => {
   emit('submit')
 }
 </script>

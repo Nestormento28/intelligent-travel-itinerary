@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { GUESTS_CONFIG } from '@/constants/search.js'
+import { GUESTS_CONFIG } from '@/constants/search'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 
@@ -20,7 +20,7 @@ const emit = defineEmits<{
 
 const guests = computed({
   get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+  set: (value: number) => emit('update:modelValue', value)
 })
 </script>
 
