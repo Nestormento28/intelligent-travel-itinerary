@@ -1,8 +1,3 @@
-/**
- * Search form constants and configuration
- */
-
-// Tab definitions
 export interface SearchTab {
   id: 'hotel' | 'flights' | 'hotel+flights'
   label: string
@@ -21,7 +16,6 @@ export const BUDGET_CONFIG = {
   default: 2500
 }
 
-// Guest configuration
 export interface GuestsConfig {
   min: number
   max: number
@@ -34,7 +28,6 @@ export const GUESTS_CONFIG: GuestsConfig = {
   default: 1
 }
 
-// Validation rules
 export interface ValidationRules {
   minLocationChars: number
   maxNights: number
@@ -49,7 +42,6 @@ export const VALIDATION_RULES: ValidationRules = {
   maxExtraInfoChars: 200
 }
 
-// Error messages
 export interface ErrorMessages {
   origin: {
     required: string
@@ -107,4 +99,3 @@ export const ERROR_MESSAGES: ErrorMessages = {
     max: `Maximum ${GUESTS_CONFIG.max} guests allowed`
   }
 }
-

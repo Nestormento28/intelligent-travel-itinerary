@@ -28,9 +28,6 @@ export interface FormData {
     extraInfo: string
 }
 
-/**
- * Composable for search form validation
- */
 export function useSearchValidation() {
     const errors = reactive<ValidationErrors>({
         origin: '',
@@ -41,9 +38,6 @@ export function useSearchValidation() {
         extraInfo: ''
     })
 
-    /**
-     * Clear all validation errors
-     */
     const clearErrors = (): void => {
         errors.origin = ''
         errors.destination = ''
@@ -53,9 +47,6 @@ export function useSearchValidation() {
         errors.extraInfo = ''
     }
 
-    /**
-     * Clear a specific error field
-     */
     const clearError = (field: keyof ValidationErrors): void => {
         if (field in errors) {
             errors[field] = ''
@@ -74,9 +65,6 @@ export function useSearchValidation() {
         return new Date(dateStr)
     }
 
-    /**
-     * Validate the search form
-     */
     const validateForm = (formData: FormData): boolean => {
         clearErrors()
         let isValid = true

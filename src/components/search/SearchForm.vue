@@ -3,24 +3,17 @@ import { watch } from 'vue'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Label } from '@/components/ui/label'
-
-// Components
 import BudgetSlider from '@/components/common/BudgetSlider.vue'
 import GuestInput from '@/components/common/GuestInput.vue'
 import LocationInput from '@/components/common/LocationInput.vue'
 import ExtraInfoInput from '@/components/common/ExtraInfoInput.vue'
 import FlightDatePicker from '@/components/search/FlightDatePicker.vue'
 import DateRangePicker from '@/components/DateRangePicker.vue'
-
-// Composables
 import { useBookingForm } from '@/composables/useBookingForm'
 import { useSearchValidation, type DateRangeData } from '@/composables/useSearchValidation'
 import { usePromptGenerator } from '@/composables/usePromptGenerator'
-
-// Constants
 import { SEARCH_TABS } from '@/constants/search'
 
-// Form state and logic
 const {
   activeTab,
   origin,
@@ -38,7 +31,6 @@ const {
 const { errors, clearErrors, clearError, validateForm } = useSearchValidation()
 const { generatePrompt, sendPrompt } = usePromptGenerator()
 
-// Handlers
 const handleRangeUpdate = (range: DateRangeData): void => {
   dateRangeData.value = range
 }
@@ -58,7 +50,6 @@ const getSubmitButtonText = (): string => {
   return 'Search Hotels + Flights'
 }
 
-// Watchers
 watch(activeTab, () => {
   clearErrors()
 })
@@ -70,7 +61,6 @@ watch(flightDateType, () => {
 
 <template>
   <Tabs v-model="activeTab" class="w-full">
-    <!-- Tabs Navigation -->
     <TabsList class="grid w-full grid-cols-3 mb-6">
       <TabsTrigger
         v-for="tab in SEARCH_TABS"
@@ -81,11 +71,8 @@ watch(flightDateType, () => {
       </TabsTrigger>
     </TabsList>
 
-    <!-- Form Content -->
     <form class="space-y-4" @submit.prevent="handleSubmit">
-      <!-- Origin & Destination Row -->
       <div :class="activeTab !== 'hotel' ? 'grid grid-cols-2 gap-4' : ''">
-        <!-- Origin - hidden for Hotel tab -->
         <LocationInput
           v-if="activeTab !== 'hotel'"
           id="origin"
@@ -104,7 +91,6 @@ watch(flightDateType, () => {
         />
       </div>
 
-      <!-- Dates for Hotel and Hotel+Flights -->
       <div v-if="activeTab !== 'flights'" class="space-y-2">
         <Label>Dates</Label>
         <DateRangePicker
@@ -115,7 +101,6 @@ watch(flightDateType, () => {
         <p v-if="errors.dates" class="text-sm text-destructive">{{ errors.dates }}</p>
       </div>
 
-      <!-- Dates for Flights - with single/range toggle -->
       <FlightDatePicker
         v-if="activeTab === 'flights'"
         v-model:flightDateType="flightDateType"
@@ -125,7 +110,6 @@ watch(flightDateType, () => {
         @update:range="handleRangeUpdate"
       />
 
-      <!-- Budget & Guests Row -->
       <div class="grid grid-cols-2 gap-4">
         <BudgetSlider
           v-model="budget"
