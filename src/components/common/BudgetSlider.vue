@@ -1,8 +1,8 @@
 <script setup>
 import { computed } from 'vue'
-import Slider from '@vueform/slider'
-import '@vueform/slider/themes/default.css'
-import { BUDGET_CONFIG } from '../../constants/search.js'
+import { Slider } from '@/components/ui/slider'
+import { Label } from '@/components/ui/label'
+import { BUDGET_CONFIG } from '@/constants/search.js'
 
 const props = defineProps({
   modelValue: {
@@ -17,9 +17,10 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const budget = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+// Shadcn Slider usa array [value], no un número simple
+const budgetArray = computed({
+  get: () => [props.modelValue],
+  set: (value) => emit('update:modelValue', value[0])
 })
 
 const formattedBudget = computed(() => {
@@ -28,31 +29,27 @@ const formattedBudget = computed(() => {
 </script>
 
 <template>
-  <div>
-    <label class="block text-sm font-medium text-gray-700 mb-4">
-      Budget: {{ formattedBudget }}
-    </label>
+  <div class="space-y-3">
+    <div class="flex items-center justify-between">
+      <Label for="budget" class="text-sm font-medium">Budget</Label>
+      <span class="text-sm font-semibold text-foreground">{{ formattedBudget }}</span>
+    </div>
+
     <Slider
-      v-model="budget"
+      id="budget"
+      v-model="budgetArray"
       :min="BUDGET_CONFIG.min"
       :max="BUDGET_CONFIG.max"
       :step="BUDGET_CONFIG.step"
-      :lazy="false"
-      show-tooltip="drag"
-      class="slider-blue"
+      class="w-full"
     />
-    <div class="flex justify-between text-xs text-gray-500 mt-1">
-      <span>{{ BUDGET_CONFIG.min }}</span>
+
+    <div class="flex justify-between text-xs text-muted-foreground">
+      <span>{{ BUDGET_CONFIG.min.toLocaleString() }}</span>
       <span>{{ BUDGET_CONFIG.max.toLocaleString() }}</span>
     </div>
-    <p v-if="error" class="text-red-500 text-xs mt-1">{{ error }}</p>
+
+    <p v-if="error" class="text-destructive text-xs">{{ error }}</p>
   </div>
 </template>
 
-<style>
-.slider-blue {
-  --slider-connect-bg: #2563eb;
-  --slider-tooltip-bg: #2563eb;
-  --slider-handle-ring-color: #2563eb30;
-}
-</style>

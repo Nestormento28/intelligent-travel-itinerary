@@ -1,19 +1,22 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
-import { GUESTS_CONFIG } from '../../constants/search.js'
+import { GUESTS_CONFIG } from '@/constants/search.js'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 
-const props = defineProps({
-  modelValue: {
-    type: Number,
-    default: GUESTS_CONFIG.default
-  },
-  error: {
-    type: String,
-    default: ''
-  }
+interface Props {
+  modelValue?: number
+  error?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: GUESTS_CONFIG.default,
+  error: ''
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  'update:modelValue': [value: number]
+}>()
 
 const guests = computed({
   get: () => props.modelValue,
@@ -22,21 +25,15 @@ const guests = computed({
 </script>
 
 <template>
-  <div>
-    <label for="guests" class="block text-sm font-medium text-gray-700 mb-1">
-      Guests
-    </label>
-    <input
+  <div class="space-y-2">
+    <Label for="guests">Guests</Label>
+    <Input
       id="guests"
       v-model.number="guests"
       type="number"
       :min="GUESTS_CONFIG.min"
       :max="GUESTS_CONFIG.max"
-      :class="[
-        'w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none',
-        error ? 'border-red-500' : 'border-gray-300'
-      ]"
     />
-    <p v-if="error" class="text-red-500 text-xs mt-1">{{ error }}</p>
+    <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
   </div>
 </template>

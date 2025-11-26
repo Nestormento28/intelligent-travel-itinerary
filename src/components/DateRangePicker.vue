@@ -1,91 +1,148 @@
-  <script setup>
-  import { computed, watch } from 'vue'
-  import { VueDatePicker } from '@vuepic/vue-datepicker'
-  import '@vuepic/vue-datepicker/dist/main.css'
+<script setup>
+import { computed, watch, ref } from 'vue'
+import { CalendarIcon } from 'lucide-vue-next'
+import { RangeCalendar } from '@/components/ui/range-calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
+import { CalendarDate, DateFormatter, getLocalTimeZone, today } from '@internationalized/date'
 
-  const props = defineProps({
-    modelValue: {
-      type: Array,
-      default: null
-    },
-    error: {
-      type: Boolean,
-      default: false
+const props = defineProps({
+  modelValue: {
+    type: Array,
+    default: null
+  },
+  error: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const emit = defineEmits(['update:modelValue', 'update:range'])
+
+const open = ref(false)
+const minDate = today(getLocalTimeZone())
+
+// Convertir array de strings "dd/MM/yyyy" a objeto DateRange con CalendarDate
+const dateRange = computed({
+  get: () => {
+    if (!props.modelValue || !props.modelValue[0] || !props.modelValue[1]) {
+      return { start: undefined, end: undefined }
     }
-  })
-
-  const emit = defineEmits(['update:modelValue', 'update:range'])
-
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-
-  const dateRange = computed({
-    get: () => props.modelValue,
-    set: (value) => emit('update:modelValue', value)
-  })
-
-  const parseDateString = (dateStr) => {
-    if (!dateStr) return null
-    const parts = dateStr.split('/')
-    if (parts.length === 3) {
-      return new Date(parts[2], parts[1] - 1, parts[0])
+    return {
+      start: stringToCalendarDate(props.modelValue[0]),
+      end: stringToCalendarDate(props.modelValue[1])
     }
-    return new Date(dateStr)
-  }
-
-  const numberOfNights = computed(() => {
-    if (!dateRange.value || !dateRange.value[0] || !dateRange.value[1]) {
-      return 0
+  },
+  set: (value) => {
+    if (!value || !value.start || !value.end) {
+      emit('update:modelValue', null)
+      return
     }
-    const start = parseDateString(dateRange.value[0])
-    const end = parseDateString(dateRange.value[1])
-    if (!start || !end) return 0
-    const diffTime = Math.abs(end - start)
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return diffDays
+    const formatted = [
+      calendarDateToString(value.start),
+      calendarDateToString(value.end)
+    ]
+    emit('update:modelValue', formatted)
+  }
+})
+
+// Convertir string "dd/MM/yyyy" a CalendarDate
+const stringToCalendarDate = (dateStr) => {
+  if (!dateStr) return undefined
+  const parts = dateStr.split('/')
+  if (parts.length === 3) {
+    const day = parseInt(parts[0], 10)
+    const month = parseInt(parts[1], 10)
+    const year = parseInt(parts[2], 10)
+    return new CalendarDate(year, month, day)
+  }
+  return undefined
+}
+
+// Convertir CalendarDate a string "dd/MM/yyyy"
+const calendarDateToString = (calendarDate) => {
+  if (!calendarDate) return null
+  const day = String(calendarDate.day).padStart(2, '0')
+  const month = String(calendarDate.month).padStart(2, '0')
+  const year = calendarDate.year
+  return `${day}/${month}/${year}`
+}
+
+const numberOfNights = computed(() => {
+  if (!dateRange.value.start || !dateRange.value.end) {
+    return 0
+  }
+
+  const start = dateRange.value.start
+  const end = dateRange.value.end
+
+  // Convertir a timestamp para calcular diferencia
+  const startDate = new Date(start.year, start.month - 1, start.day)
+  const endDate = new Date(end.year, end.month - 1, end.day)
+  const diffTime = Math.abs(endDate - startDate)
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+})
+
+const formattedDateRange = computed(() => {
+  const df = new DateFormatter('en-GB', { dateStyle: 'medium' })
+
+  if (!dateRange.value.start) {
+    return 'Check-in — Check-out'
+  }
+
+  if (!dateRange.value.end) {
+    return df.format(dateRange.value.start.toDate(getLocalTimeZone()))
+  }
+
+  return `${df.format(dateRange.value.start.toDate(getLocalTimeZone()))} — ${df.format(dateRange.value.end.toDate(getLocalTimeZone()))}`
+})
+
+watch(dateRange, (newValue) => {
+  emit('update:range', {
+    startDate: newValue.start ? calendarDateToString(newValue.start) : null,
+    endDate: newValue.end ? calendarDateToString(newValue.end) : null,
+    nights: numberOfNights.value
   })
+}, { deep: true })
 
-  watch(dateRange, (newValue) => {
-    emit('update:range', {
-      startDate: newValue?.[0] || null,
-      endDate: newValue?.[1] || null,
-      nights: numberOfNights.value
-    })
-  })
-  </script>
-
-  <template setup>
-    <div :class="['date-picker-wrapper', { 'has-error': error }]">
-      <VueDatePicker
-        v-model="dateRange"
-        range
-        auto-apply
-        format="dd/MM/yyyy"
-        preview-format="dd/MM/yyyy"
-        model-type="dd/MM/yyyy"
-        placeholder="Check-in — Check-out"
-        :enable-time-picker="false"
-        :min-date="today"
-        :min-range="2"
-      />
-    </div>
-  </template>
-
-  <style scoped>
-  .date-picker-wrapper :deep(.dp__input) {
-    width: 100%;
-    padding: 0.5rem 1rem 0.5rem 2.5rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
-    outline: none;
+// Cerrar popover cuando se selecciona rango completo
+watch(numberOfNights, (nights) => {
+  if (nights > 0) {
+    open.value = false
   }
+})
+</script>
 
-  .date-picker-wrapper :deep(.dp__input:focus) {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
-  }
+<template>
+  <div class="flex gap-2">
+    <Popover v-model:open="open">
+      <PopoverTrigger as-child>
+        <Button
+          variant="outline"
+          :class="cn(
+            'w-full justify-start text-left font-normal',
+            !dateRange.start && 'text-muted-foreground',
+            error && 'border-destructive'
+          )"
+        >
+          <CalendarIcon class="mr-2 h-4 w-4" />
+          {{ formattedDateRange }}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent class="w-auto p-0" align="start">
+        <RangeCalendar
+          v-model="dateRange"
+          :number-of-months="2"
+          :min-value="minDate"
+        />
+      </PopoverContent>
+    </Popover>
 
-  .date-picker-wrapper.has-error :deep(.dp__input) {
-    border-color: #ef4444;
-  }
-  </style>
+    <Badge v-if="numberOfNights > 0" variant="secondary" class="self-center whitespace-nowrap">
+      {{ numberOfNights }} {{ numberOfNights === 1 ? 'night' : 'nights' }}
+    </Badge>
+  </div>
+</template>
+

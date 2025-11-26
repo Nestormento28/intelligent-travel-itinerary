@@ -1,19 +1,22 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
-import { VALIDATION_RULES } from '../../constants/search.js'
+import { VALIDATION_RULES } from '@/constants/search.js'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 
-const props = defineProps({
-  modelValue: {
-    type: String,
-    default: ''
-  },
-  error: {
-    type: String,
-    default: ''
-  }
+interface Props {
+  modelValue?: string
+  error?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  error: ''
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  'update:modelValue': [value: string]
+}>()
 
 const extraInfo = computed({
   get: () => props.modelValue,
@@ -24,24 +27,21 @@ const maxChars = VALIDATION_RULES.maxExtraInfoChars
 </script>
 
 <template>
-  <div>
-    <label for="extraInfo" class="block text-sm font-medium text-gray-700 mb-1">
-      Extra Info <span class="text-gray-400 font-normal">(optional)</span>
-    </label>
-    <textarea
+  <div class="space-y-2">
+    <Label for="extraInfo">
+      Extra Info <span class="text-muted-foreground font-normal">(optional)</span>
+    </Label>
+    <Textarea
       id="extraInfo"
       v-model="extraInfo"
       :maxlength="maxChars"
       rows="2"
       placeholder="Hotel with spa, first class flight, near to the beach..."
-      :class="[
-        'w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none',
-        error ? 'border-red-500' : 'border-gray-300'
-      ]"
-    ></textarea>
-    <div class="flex justify-between text-xs mt-1">
-      <p v-if="error" class="text-red-500">{{ error }}</p>
-      <span :class="modelValue.length > maxChars ? 'text-red-500' : 'text-gray-400'" class="ml-auto">
+      class="resize-none"
+    />
+    <div class="flex justify-between text-xs">
+      <p v-if="error" class="text-destructive">{{ error }}</p>
+      <span :class="modelValue.length > maxChars ? 'text-destructive' : 'text-muted-foreground'" class="ml-auto">
         {{ modelValue.length }}/{{ maxChars }}
       </span>
     </div>

@@ -1,26 +1,32 @@
 <script setup>
-import { ref, watch } from 'vue'
+import {ref, watch} from 'vue'
+
+// shadcn-vue Components
+import {Button} from '@/components/ui/button'
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card'
+import {Tabs, TabsList, TabsTrigger} from '@/components/ui/tabs'
+import {Label} from '@/components/ui/label'
+import {Separator} from '@/components/ui/separator'
 
 // Components
-import TabGroup from './components/common/TabGroup.vue'
-import BudgetSlider from './components/common/BudgetSlider.vue'
-import GuestInput from './components/common/GuestInput.vue'
-import LocationInput from './components/common/LocationInput.vue'
-import ExtraInfoInput from './components/common/ExtraInfoInput.vue'
-import ChatInput from './components/search/ChatInput.vue'
-import FlightDatePicker from './components/search/FlightDatePicker.vue'
-import DateRangePicker from './components/DateRangePicker.vue'
+import BudgetSlider from '@/components/common/BudgetSlider.vue'
+import GuestInput from '@/components/common/GuestInput.vue'
+import LocationInput from '@/components/common/LocationInput.vue'
+import ExtraInfoInput from '@/components/common/ExtraInfoInput.vue'
+import ChatInput from '@/components/search/ChatInput.vue'
+import FlightDatePicker from '@/components/search/FlightDatePicker.vue'
+import DateRangePicker from '@/components/DateRangePicker.vue'
 
 // Composables
-import { useSearchValidation } from './composables/useSearchValidation.js'
-import { usePromptGenerator } from './composables/usePromptGenerator.js'
+import {useSearchValidation} from '@/composables/useSearchValidation.js'
+import {usePromptGenerator} from '@/composables/usePromptGenerator.js'
 
 // Constants
-import { SEARCH_TABS, BUDGET_CONFIG, GUESTS_CONFIG } from './constants/search.js'
+import {BUDGET_CONFIG, GUESTS_CONFIG, SEARCH_TABS} from '@/constants/search.js'
 
 // Initialize composables
-const { errors, clearErrors, clearError, validateForm } = useSearchValidation()
-const { generatePrompt, sendPrompt } = usePromptGenerator()
+const {errors, clearErrors, clearError, validateForm} = useSearchValidation()
+const {generatePrompt, sendPrompt} = usePromptGenerator()
 
 // Form state
 const activeTab = ref('hotel')
@@ -40,10 +46,11 @@ const extraInfo = ref('')
 const chatMessage = ref('')
 
 // Handlers
-const handleTabChange = (tabId) => {
-  activeTab.value = tabId
+
+// Clear errors when tab changes
+watch(activeTab, () => {
   clearErrors()
-}
+})
 
 const handleRangeUpdate = (range) => {
   dateRangeData.value = range
@@ -90,103 +97,108 @@ const getSubmitButtonText = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-100 p-4">
+  <div class="min-h-screen bg-background p-4">
     <div class="max-w-2xl mx-auto">
       <!-- Travel Assistant Section -->
       <ChatInput
-        v-model="chatMessage"
-        @submit="handleChatSubmit"
+          v-model="chatMessage"
+          @submit="handleChatSubmit"
       />
 
       <!-- Or Separator -->
       <div class="flex items-center gap-4 my-6">
-        <div class="flex-1 h-px bg-gray-300"></div>
-        <span class="text-gray-500 font-medium">or</span>
-        <div class="flex-1 h-px bg-gray-300"></div>
+        <Separator class="flex-1" />
+        <span class="text-muted-foreground font-medium">or</span>
+        <Separator class="flex-1" />
       </div>
 
       <!-- Classic Booking Section -->
-      <div class="bg-white rounded-lg shadow-lg p-6">
-        <h1 class="text-2xl font-bold text-gray-800 mb-4 text-center">Classic Booking</h1>
+      <Card>
+        <CardHeader>
+          <CardTitle class="text-center">Classic Booking</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs v-model="activeTab" class="w-full">
+            <!-- Tabs Navigation -->
+            <TabsList class="grid w-full grid-cols-3 mb-6">
+              <TabsTrigger
+                v-for="tab in SEARCH_TABS"
+                :key="tab.id"
+                :value="tab.id"
+              >
+                {{ tab.label }}
+              </TabsTrigger>
+            </TabsList>
 
-        <!-- Tabs -->
-        <TabGroup
-          v-model="activeTab"
-          :tabs="SEARCH_TABS"
-          @update:modelValue="handleTabChange"
-        />
+            <!-- Form Content -->
+            <form class="space-y-4" @submit.prevent="handleSubmit">
+              <!-- Origin & Destination Row -->
+              <div :class="activeTab !== 'hotel' ? 'grid grid-cols-2 gap-4' : ''">
+                <!-- Origin - hidden for Hotel tab -->
+                <LocationInput
+                    v-if="activeTab !== 'hotel'"
+                    id="origin"
+                    v-model="origin"
+                    :error="errors.origin"
+                    label="Origin"
+                    placeholder="Where are you from?"
+                />
 
-        <form @submit.prevent="handleSubmit" class="space-y-4">
-          <!-- Origin & Destination Row -->
-          <div :class="activeTab !== 'hotel' ? 'grid grid-cols-2 gap-4' : ''">
-            <!-- Origin - hidden for Hotel tab -->
-            <LocationInput
-              v-if="activeTab !== 'hotel'"
-              id="origin"
-              v-model="origin"
-              label="Origin"
-              placeholder="Where are you from?"
-              :error="errors.origin"
-            />
+                <LocationInput
+                    id="destination"
+                    v-model="destination"
+                    :error="errors.destination"
+                    label="Destination"
+                    placeholder="Where are you going?"
+                />
+              </div>
 
-            <LocationInput
-              id="destination"
-              v-model="destination"
-              label="Destination"
-              placeholder="Where are you going?"
-              :error="errors.destination"
-            />
-          </div>
+              <!-- Dates for Hotel and Hotel+Flights -->
+              <div v-if="activeTab !== 'flights'" class="space-y-2">
+                <Label>Dates</Label>
+                <DateRangePicker
+                    v-model="dateRangeValue"
+                    :error="!!errors.dates"
+                    @update:range="handleRangeUpdate"
+                />
+                <p v-if="errors.dates" class="text-sm text-destructive">{{ errors.dates }}</p>
+              </div>
 
-          <!-- Dates for Hotel and Hotel+Flights -->
-          <div v-if="activeTab !== 'flights'">
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Dates
-            </label>
-            <DateRangePicker
-              v-model="dateRangeValue"
-              :error="!!errors.dates"
-              @update:range="handleRangeUpdate"
-            />
-            <p v-if="errors.dates" class="text-red-500 text-xs mt-1">{{ errors.dates }}</p>
-          </div>
+              <!-- Dates for Flights - with single/range toggle -->
+              <FlightDatePicker
+                  v-if="activeTab === 'flights'"
+                  v-model:flightDateType="flightDateType"
+                  v-model:rangeValue="dateRangeValue"
+                  v-model:singleDate="singleFlightDate"
+                  :error="errors.dates"
+                  @update:range="handleRangeUpdate"
+              />
 
-          <!-- Dates for Flights - with single/range toggle -->
-          <FlightDatePicker
-            v-if="activeTab === 'flights'"
-            v-model:flightDateType="flightDateType"
-            v-model:singleDate="singleFlightDate"
-            v-model:rangeValue="dateRangeValue"
-            :error="errors.dates"
-            @update:range="handleRangeUpdate"
-          />
+              <!-- Budget & Guests Row -->
+              <div class="grid grid-cols-2 gap-4">
+                <BudgetSlider
+                    v-model="budget"
+                    :error="errors.budget"
+                />
 
-          <!-- Budget & Guests Row -->
-          <div class="grid grid-cols-2 gap-4">
-            <BudgetSlider
-              v-model="budget"
-              :error="errors.budget"
-            />
+                <GuestInput
+                    v-model="guests"
+                    :error="errors.guests"
+                />
+              </div>
 
-            <GuestInput
-              v-model="guests"
-              :error="errors.guests"
-            />
-          </div>
+              <ExtraInfoInput
+                  v-model="extraInfo"
+                  :error="errors.extraInfo"
+              />
 
-          <ExtraInfoInput
-            v-model="extraInfo"
-            :error="errors.extraInfo"
-          />
-
-          <button
-            type="submit"
-            class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium"
-          >
-            {{ getSubmitButtonText() }}
-          </button>
-        </form>
-      </div>
+              <Button class="w-full" type="submit">
+                {{ getSubmitButtonText() }}
+              </Button>
+            </form>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   </div>
 </template>

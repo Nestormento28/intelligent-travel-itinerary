@@ -1,30 +1,25 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 
-const props = defineProps({
-  modelValue: {
-    type: String,
-    default: ''
-  },
-  label: {
-    type: String,
-    required: true
-  },
-  placeholder: {
-    type: String,
-    default: ''
-  },
-  error: {
-    type: String,
-    default: ''
-  },
-  id: {
-    type: String,
-    required: true
-  }
+interface Props {
+  modelValue?: string
+  label: string
+  placeholder?: string
+  error?: string
+  id: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  placeholder: '',
+  error: ''
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  'update:modelValue': [value: string]
+}>()
 
 const value = computed({
   get: () => props.modelValue,
@@ -33,20 +28,14 @@ const value = computed({
 </script>
 
 <template>
-  <div>
-    <label :for="id" class="block text-sm font-medium text-gray-700 mb-1">
-      {{ label }}
-    </label>
-    <input
+  <div class="space-y-2">
+    <Label :for="id">{{ label }}</Label>
+    <Input
       :id="id"
       v-model="value"
       type="text"
       :placeholder="placeholder"
-      :class="[
-        'w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none',
-        error ? 'border-red-500' : 'border-gray-300'
-      ]"
     />
-    <p v-if="error" class="text-red-500 text-xs mt-1">{{ error }}</p>
+    <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
   </div>
 </template>
