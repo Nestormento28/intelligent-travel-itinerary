@@ -9,7 +9,6 @@ import SearchFilters from '@/components/search/SearchFilters.vue'
 import SearchResults from '@/components/search/SearchResults.vue'
 import { useSearchStore } from '@/composables/useSearchStore'
 import type { RoomResult, HotelSearchResponse } from '@/types'
-import hotelMockData from '@/mocks/hotelResponse.json'
 
 const { searchMode, chatMessage, activeTab, generatedPrompt, setSearchData } = useSearchStore()
 
@@ -18,21 +17,35 @@ const isLoading = ref(false)
 const errorMessage = ref<string | null>(null)
 const hotelResults = ref<RoomResult[]>([])
 const sortBy = ref<string>('default')
+const starFilters = ref<Record<number, boolean>>({
+  1: true,
+  2: true,
+  3: true,
+  4: true,
+  5: true
+})
 
-const fetchHotelResults = async (): Promise<HotelSearchResponse> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000))
+// API endpoint
+const API_BASE_URL = 'http://172.20.10.9:2000'
+const SESSION_ID = '8128'
 
-  // In production, this would be a real API call:
-  // const response = await fetch('/api/hotels/search', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ prompt })
-  // })
-  // if (!response.ok) throw new Error('Failed to fetch hotel results')
-  // return response.json()
+const fetchHotelResults = async (prompt: string): Promise<HotelSearchResponse> => {
+  const response = await fetch(`${API_BASE_URL}/prompts`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      prompt,
+      sessionId: SESSION_ID
+    })
+  })
 
-  return hotelMockData as HotelSearchResponse
+  if (!response.ok) {
+    throw new Error(`API error: ${response.status} ${response.statusText}`)
+  }
+
+  return response.json()
 }
 
 const sendPrompt = async (prompt: string): Promise<void> => {
@@ -44,7 +57,7 @@ const sendPrompt = async (prompt: string): Promise<void> => {
   hotelResults.value = []
 
   try {
-    const response = await fetchHotelResults()
+    const response = await fetchHotelResults(prompt)
     hotelResults.value = response.rooms
   } catch (error) {
     const message = error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -115,7 +128,12 @@ onMounted(() => {
 
     <main class="w-full px-4 py-6">
       <div class="flex gap-6">
-        <SearchFilters :search-type="activeTab" v-model:sort-by="sortBy" class="border-r pr-6" />
+        <SearchFilters
+          :search-type="activeTab"
+          v-model:sort-by="sortBy"
+          v-model:star-filters="starFilters"
+          class="border-r pr-6"
+        />
 
         <div class="flex-1">
           <!-- Loading State -->
@@ -146,6 +164,7 @@ onMounted(() => {
             :search-type="activeTab"
             :hotels="hotelResults"
             :sort-by="sortBy"
+            :star-filters="starFilters"
           />
 
           <!-- Initial State -->

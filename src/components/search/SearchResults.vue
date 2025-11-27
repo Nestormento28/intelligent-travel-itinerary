@@ -9,23 +9,39 @@ interface Props {
   searchType: 'hotel' | 'flights' | 'hotel+flights'
   hotels?: RoomResult[]
   sortBy?: string
+  starFilters?: Record<number, boolean>
 }
 
 const props = defineProps<Props>()
 
-// Sorted hotels based on sortBy prop
+// Check if any star filter is active
+const hasActiveStarFilter = computed(() => {
+  if (!props.starFilters) return false
+  return Object.values(props.starFilters).some(v => v)
+})
+
+// Filtered and sorted hotels
 const sortedHotels = computed(() => {
   if (!props.hotels) return []
 
-  const hotelsCopy = [...props.hotels]
+  let filtered = [...props.hotels]
 
+  // Apply star filter if any star is selected
+  if (hasActiveStarFilter.value && props.starFilters) {
+    filtered = filtered.filter(room => {
+      const stars = room.hotel.stars
+      return props.starFilters![stars]
+    })
+  }
+
+  // Apply sorting
   switch (props.sortBy) {
     case 'price-asc':
-      return hotelsCopy.sort((a, b) => parseFloat(a.price.total) - parseFloat(b.price.total))
+      return filtered.sort((a, b) => parseFloat(a.price.total) - parseFloat(b.price.total))
     case 'price-desc':
-      return hotelsCopy.sort((a, b) => parseFloat(b.price.total) - parseFloat(a.price.total))
+      return filtered.sort((a, b) => parseFloat(b.price.total) - parseFloat(a.price.total))
     default:
-      return hotelsCopy
+      return filtered
   }
 })
 

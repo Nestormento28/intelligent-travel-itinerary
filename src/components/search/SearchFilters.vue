@@ -1,10 +1,18 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Separator } from '@/components/ui/separator'
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
-import { Star, Plane, Hotel, Clock, Wifi, Car, UtensilsCrossed, Dumbbell, ArrowUpDown } from 'lucide-vue-next'
+import { Star, Plane, Hotel, Clock, ArrowUpDown } from 'lucide-vue-next'
+
+export interface StarFilters {
+  1: boolean
+  2: boolean
+  3: boolean
+  4: boolean
+  5: boolean
+}
 
 interface Props {
   searchType: 'hotel' | 'flights' | 'hotel+flights'
@@ -13,21 +21,8 @@ interface Props {
 defineProps<Props>()
 
 const sortBy = defineModel<string>('sortBy', { default: 'default' })
-
-const hotelFilters = reactive({
-  stars: {
-    1: false,
-    2: false,
-    3: false,
-    4: false,
-    5: false
-  },
-  amenities: {
-    wifi: false,
-    parking: false,
-    breakfast: false,
-    gym: false
-  }
+const starFilters = defineModel<StarFilters>('starFilters', {
+  default: () => ({ 1: true, 2: true, 3: true, 4: true, 5: true })
 })
 
 const flightFilters = reactive({
@@ -83,7 +78,7 @@ const flightFilters = reactive({
               >
                 <Checkbox
                   :id="`star-${star}`"
-                  v-model:checked="hotelFilters.stars[star as keyof typeof hotelFilters.stars]"
+                  v-model:checked="starFilters[star as keyof StarFilters]"
                 />
                 <Label :for="`star-${star}`" class="flex items-center gap-1 cursor-pointer font-normal">
                   <Star
@@ -91,41 +86,6 @@ const flightFilters = reactive({
                     :key="s"
                     class="h-3 w-3 fill-yellow-400 text-yellow-400"
                   />
-                </Label>
-              </div>
-            </div>
-          </div>
-
-          <!-- Amenities -->
-          <div class="space-y-3">
-            <Label class="text-sm font-medium">Amenities</Label>
-            <div class="space-y-2">
-              <div class="flex items-center space-x-2">
-                <Checkbox id="wifi" v-model:checked="hotelFilters.amenities.wifi" />
-                <Label for="wifi" class="flex items-center gap-2 cursor-pointer font-normal">
-                  <Wifi class="h-3 w-3" />
-                  Free WiFi
-                </Label>
-              </div>
-              <div class="flex items-center space-x-2">
-                <Checkbox id="parking" v-model:checked="hotelFilters.amenities.parking" />
-                <Label for="parking" class="flex items-center gap-2 cursor-pointer font-normal">
-                  <Car class="h-3 w-3" />
-                  Parking
-                </Label>
-              </div>
-              <div class="flex items-center space-x-2">
-                <Checkbox id="breakfast" v-model:checked="hotelFilters.amenities.breakfast" />
-                <Label for="breakfast" class="flex items-center gap-2 cursor-pointer font-normal">
-                  <UtensilsCrossed class="h-3 w-3" />
-                  Breakfast included
-                </Label>
-              </div>
-              <div class="flex items-center space-x-2">
-                <Checkbox id="gym" v-model:checked="hotelFilters.amenities.gym" />
-                <Label for="gym" class="flex items-center gap-2 cursor-pointer font-normal">
-                  <Dumbbell class="h-3 w-3" />
-                  Gym
                 </Label>
               </div>
             </div>
