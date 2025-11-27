@@ -17,6 +17,7 @@ const hasSearched = ref(false)
 const isLoading = ref(false)
 const errorMessage = ref<string | null>(null)
 const hotelResults = ref<RoomResult[]>([])
+const plainTextResponse = ref<string | null>(null)
 const sortBy = ref<string>('default')
 const starFilters = ref<Record<number, boolean>>({
   1: true,
@@ -30,7 +31,7 @@ const starFilters = ref<Record<number, boolean>>({
 const API_BASE_URL = 'http://172.20.10.9:2000'
 const SESSION_ID = '8128'
 
-const fetchHotelResults = async (prompt: string): Promise<HotelSearchResponse> => {
+const fetchHotelResults = async (prompt: string): Promise<HotelSearchResponse | string> => {
   try {
     console.log('Sending request to API:', { prompt, sessionId: SESSION_ID })
 
@@ -53,10 +54,37 @@ const fetchHotelResults = async (prompt: string): Promise<HotelSearchResponse> =
       throw new Error(`API error: ${response.status} ${response.statusText}`)
     }
 
-    const data = await response.json()
-    console.log('API response data:', data)
+    // Read response as text first (can only read once)
+    const text = await response.text()
+    console.log('Raw response:', text)
 
-    return data
+    // Try to parse as JSON
+    try {
+      const data = JSON.parse(text)
+      console.log('Parsed JSON data:', data)
+
+      // Check if it's a valid HotelSearchResponse with rooms array
+      if (data && typeof data === 'object' && 'rooms' in data && Array.isArray(data.rooms)) {
+        return data
+      }
+
+      // If JSON but not expected format, try to extract text
+      if (typeof data === 'string') {
+        return data
+      }
+
+      // If object with message/text/response field
+      if (data.message || data.text || data.response) {
+        return data.message || data.text || data.response
+      }
+
+      // Return JSON as formatted string
+      return JSON.stringify(data, null, 2)
+    } catch (jsonError) {
+      // Not valid JSON, return as plain text
+      console.log('Response is not JSON, returning as plain text')
+      return text
+    }
   } catch (error) {
     console.error('Fetch error details:', error)
     throw error
@@ -66,12 +94,22 @@ const fetchHotelResults = async (prompt: string): Promise<HotelSearchResponse> =
 const sendPrompt = async (prompt: string): Promise<void> => {
   isLoading.value = true
   errorMessage.value = null
+  plainTextResponse.value = null
   hasSearched.value = true
   hotelResults.value = []
 
   try {
     const response = await fetchHotelResults(prompt)
-    hotelResults.value = response.rooms
+
+    // Check if response is a string (plain text)
+    if (typeof response === 'string') {
+      plainTextResponse.value = response
+      hotelResults.value = []
+    } else {
+      // It's a HotelSearchResponse object
+      hotelResults.value = response.rooms || []
+      plainTextResponse.value = null
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'An unexpected error occurred'
     errorMessage.value = `Failed to load search results: ${message}`
@@ -182,6 +220,7 @@ onMounted(() => {
             :hotels="hotelResults"
             :sort-by="sortBy"
             :star-filters="starFilters"
+            :plain-text-response="plainTextResponse"
           />
 
           <!-- Initial State -->

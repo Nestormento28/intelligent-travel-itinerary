@@ -10,6 +10,7 @@ interface Props {
   hotels?: RoomResult[]
   sortBy?: string
   starFilters?: Record<number, boolean>
+  plainTextResponse?: string | null
 }
 
 const props = defineProps<Props>()
@@ -127,7 +128,8 @@ const calculateTotalPrice = (hotelPrice: string, flightPrice: number): string =>
           />
         </div>
         <div v-else class="text-center text-muted-foreground py-8">
-          <p>No packages found matching your criteria.</p>
+          <p v-if="plainTextResponse" class="whitespace-pre-wrap">{{ plainTextResponse }}</p>
+          <p v-else>No packages found matching your criteria.</p>
         </div>
       </div>
     </template>
@@ -158,7 +160,8 @@ const calculateTotalPrice = (hotelPrice: string, flightPrice: number): string =>
           />
         </div>
         <div v-else class="text-center text-muted-foreground py-8">
-          <p>No hotels found matching your criteria.</p>
+          <p v-if="plainTextResponse" class="whitespace-pre-wrap">{{ plainTextResponse }}</p>
+          <p v-else>No hotels found matching your criteria.</p>
         </div>
       </div>
     </template>
