@@ -12,7 +12,7 @@ interface Props {
 
 defineProps<Props>()
 
-const sortBy = ref<string>('price-asc')
+const sortBy = defineModel<string>('sortBy', { default: 'default' })
 
 const hotelFilters = reactive({
   stars: {
@@ -56,10 +56,9 @@ const flightFilters = reactive({
           <h3 class="font-semibold">Sort By</h3>
         </div>
         <NativeSelect v-model="sortBy" class="w-full">
+          <NativeSelectOption value="default">Default</NativeSelectOption>
           <NativeSelectOption value="price-asc">Price: Low to High</NativeSelectOption>
           <NativeSelectOption value="price-desc">Price: High to Low</NativeSelectOption>
-          <NativeSelectOption value="rating">Best Rating</NativeSelectOption>
-          <NativeSelectOption value="recommended">Recommended</NativeSelectOption>
         </NativeSelect>
       </div>
 

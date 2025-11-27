@@ -14,6 +14,14 @@ import { usePromptGenerator } from '@/composables/usePromptGenerator'
 import { SEARCH_TABS, BUDGET_CONFIG, GUESTS_CONFIG } from '@/constants/search'
 import type { DateRangeData } from '@/types'
 
+interface Props {
+  disabled?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  disabled: false
+})
+
 const emit = defineEmits<{
   'search': [prompt: string]
 }>()
@@ -152,7 +160,7 @@ watch(flightDateType, () => {
           />
         </div>
 
-        <Button type="submit" size="icon" class="self-end">
+        <Button type="submit" size="icon" class="self-end" :disabled="props.disabled">
           <Search class="h-4 w-4" />
         </Button>
         </div>

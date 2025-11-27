@@ -1,42 +1,49 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import HotelCard from './HotelCard.vue'
 import FlightCard from './FlightCard.vue'
 import PackageCard from './PackageCard.vue'
+import type { RoomResult } from '@/types'
 
 interface Props {
   searchType: 'hotel' | 'flights' | 'hotel+flights'
+  hotels?: RoomResult[]
+  sortBy?: string
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
-const demoHotels = ref([
-  {
-    id: 1,
-    name: 'Grand Plaza Hotel',
-    location: 'Downtown, City Center',
-    stars: 5,
-    price: 450,
-    pricePerNight: 150,
-    nights: 3,
-    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop',
-    amenities: ['wifi', 'parking', 'breakfast'],
-    rating: 9.2
-  },
-  {
-    id: 2,
-    name: 'Comfort Inn & Suites',
-    location: 'Near Airport',
-    stars: 3,
-    price: 270,
-    pricePerNight: 90,
-    nights: 3,
-    image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400&h=300&fit=crop',
-    amenities: ['wifi', 'parking'],
-    rating: 7.8
+// Sorted hotels based on sortBy prop
+const sortedHotels = computed(() => {
+  if (!props.hotels) return []
+
+  const hotelsCopy = [...props.hotels]
+
+  switch (props.sortBy) {
+    case 'price-asc':
+      return hotelsCopy.sort((a, b) => parseFloat(a.price.total) - parseFloat(b.price.total))
+    case 'price-desc':
+      return hotelsCopy.sort((a, b) => parseFloat(b.price.total) - parseFloat(a.price.total))
+    default:
+      return hotelsCopy
   }
-])
+})
 
+// Sorted flights based on sortBy prop
+const sortedFlights = computed(() => {
+  const flightsCopy = [...demoFlights.value]
+
+  switch (props.sortBy) {
+    case 'price-asc':
+      return flightsCopy.sort((a, b) => a.price - b.price)
+    case 'price-desc':
+      return flightsCopy.sort((a, b) => b.price - a.price)
+    default:
+      return flightsCopy
+  }
+})
+
+// Demo data for flights (kept for now - flight API structure not yet available)
 const demoFlights = ref([
   {
     id: 1,
@@ -66,54 +73,24 @@ const demoFlights = ref([
   }
 ])
 
-const demoPackages = ref([
-  {
-    id: 1,
-    flight: {
-      airline: 'Sky Airways',
-      departureTime: '08:30',
-      arrivalTime: '11:45',
-      departureAirport: 'MAD',
-      arrivalAirport: 'BCN',
-      duration: '3h 15m',
-      stops: 0,
-      price: 89
-    },
-    hotel: {
-      name: 'Grand Plaza Hotel',
-      location: 'Downtown, City Center',
-      stars: 5,
-      image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop',
-      amenities: ['wifi', 'parking', 'breakfast'],
-      rating: 9.2,
-      price: 450
-    },
-    nights: 3
-  },
-  {
-    id: 2,
-    flight: {
-      airline: 'Euro Wings',
-      departureTime: '14:00',
-      arrivalTime: '18:30',
-      departureAirport: 'MAD',
-      arrivalAirport: 'BCN',
-      duration: '4h 30m',
-      stops: 1,
-      price: 65
-    },
-    hotel: {
-      name: 'Comfort Inn & Suites',
-      location: 'Near Airport',
-      stars: 3,
-      image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400&h=300&fit=crop',
-      amenities: ['wifi', 'parking'],
-      rating: 7.8,
-      price: 270
-    },
-    nights: 3
-  }
-])
+// Demo flight data for packages (flight API structure not yet available)
+const demoFlightForPackage = {
+  airline: 'Sky Airways',
+  departureTime: '08:30',
+  arrivalTime: '11:45',
+  departureAirport: 'MAD',
+  arrivalAirport: 'BCN',
+  duration: '3h 15m',
+  stops: 0,
+  price: 89
+}
+
+// Compute total price (hotel + demo flight)
+const calculateTotalPrice = (hotelPrice: string, flightPrice: number): string => {
+  const hotelAmount = parseFloat(hotelPrice)
+  const total = hotelAmount + flightPrice
+  return total.toFixed(2)
+}
 </script>
 
 <template>
@@ -122,15 +99,19 @@ const demoPackages = ref([
     <template v-if="searchType === 'hotel+flights'">
       <div>
         <h2 class="text-lg font-semibold mb-4">Available Packages</h2>
-        <div class="space-y-3">
+        <div v-if="sortedHotels.length > 0" class="space-y-3">
           <PackageCard
-            v-for="pkg in demoPackages"
-            :key="pkg.id"
-            :flight="pkg.flight"
-            :hotel="pkg.hotel"
-            :total-price="pkg.flight.price + pkg.hotel.price"
-            :nights="pkg.nights"
+            v-for="(room, index) in sortedHotels"
+            :key="`${room.hotel.name}-${room.roomName}-${index}`"
+            :flight="demoFlightForPackage"
+            :hotel="room.hotel"
+            :room-name="room.roomName"
+            :room-price="room.price"
+            :total-price="calculateTotalPrice(room.price.total, demoFlightForPackage.price)"
           />
+        </div>
+        <div v-else class="text-center text-muted-foreground py-8">
+          <p>No packages found matching your criteria.</p>
         </div>
       </div>
     </template>
@@ -141,7 +122,7 @@ const demoPackages = ref([
         <h2 class="text-lg font-semibold mb-4">Available Flights</h2>
         <div class="space-y-3">
           <FlightCard
-            v-for="flight in demoFlights"
+            v-for="flight in sortedFlights"
             :key="flight.id"
             v-bind="flight"
           />
@@ -153,12 +134,17 @@ const demoPackages = ref([
     <template v-else>
       <div>
         <h2 class="text-lg font-semibold mb-4">Available Hotels</h2>
-        <div class="space-y-3">
+        <div v-if="sortedHotels.length > 0" class="space-y-3">
           <HotelCard
-            v-for="hotel in demoHotels"
-            :key="hotel.id"
-            v-bind="hotel"
+            v-for="(room, index) in sortedHotels"
+            :key="`${room.hotel.name}-${room.roomName}-${index}`"
+            :room-name="room.roomName"
+            :price="room.price"
+            :hotel="room.hotel"
           />
+        </div>
+        <div v-else class="text-center text-muted-foreground py-8">
+          <p>No hotels found matching your criteria.</p>
         </div>
       </div>
     </template>
