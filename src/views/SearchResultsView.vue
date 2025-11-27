@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import SearchFormInline from '@/components/search/SearchFormInline.vue'
 import SearchFilters from '@/components/search/SearchFilters.vue'
 import SearchResults from '@/components/search/SearchResults.vue'
+import HotelCardSkeleton from '@/components/search/HotelCardSkeleton.vue'
 import { useSearchStore } from '@/composables/useSearchStore'
 import type { RoomResult, HotelSearchResponse } from '@/types'
 
@@ -136,10 +137,14 @@ onMounted(() => {
         />
 
         <div class="flex-1">
-          <!-- Loading State -->
-          <div v-if="isLoading" class="flex flex-col items-center justify-center py-12">
-            <Loader2 class="h-8 w-8 animate-spin text-primary mb-4" />
-            <p class="text-muted-foreground">Searching for the best options...</p>
+          <!-- Loading State - Skeleton Cards -->
+          <div v-if="isLoading" class="space-y-6">
+            <div>
+              <h2 class="text-lg font-semibold mb-4">Searching...</h2>
+              <div class="space-y-3">
+                <HotelCardSkeleton v-for="n in 5" :key="n" />
+              </div>
+            </div>
           </div>
 
           <!-- Error State -->
