@@ -31,27 +31,39 @@ const API_BASE_URL = 'http://172.20.10.9:2000'
 const SESSION_ID = '8128'
 
 const fetchHotelResults = async (prompt: string): Promise<HotelSearchResponse> => {
-  const response = await fetch(`${API_BASE_URL}/prompts`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      prompt,
-      sessionId: SESSION_ID
+  try {
+    console.log('Sending request to API:', { prompt, sessionId: SESSION_ID })
+
+    const response = await fetch(`${API_BASE_URL}/prompts`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt,
+        sessionId: SESSION_ID
+      })
     })
-  })
 
-  if (!response.ok) {
-    throw new Error(`API error: ${response.status} ${response.statusText}`)
+    console.log('API response status:', response.status, response.statusText)
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('API error response:', errorText)
+      throw new Error(`API error: ${response.status} ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    console.log('API response data:', data)
+
+    return data
+  } catch (error) {
+    console.error('Fetch error details:', error)
+    throw error
   }
-
-  return response.json()
 }
 
 const sendPrompt = async (prompt: string): Promise<void> => {
-  console.log('Sending prompt:', prompt)
-
   isLoading.value = true
   errorMessage.value = null
   hasSearched.value = true
@@ -89,9 +101,9 @@ onMounted(() => {
 <template>
   <div class="min-h-screen bg-background">
     <header class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div class="w-full px-4 py-3">
-        <Tabs v-model="searchMode" class="w-full">
-          <div class="flex items-center gap-4">
+      <div class="w-full px-4 py-3 flex justify-center">
+        <Tabs v-model="searchMode" class="w-full max-w-7xl">
+          <div class="flex items-center justify-center gap-4">
             <TabsList>
               <TabsTrigger value="assistant" class="gap-2">
                 <MessageSquare class="h-4 w-4" />
@@ -104,8 +116,8 @@ onMounted(() => {
             </TabsList>
           </div>
 
-          <TabsContent value="assistant" class="mt-0">
-            <form @submit.prevent="handleChatSubmit" class="flex gap-2 max-w-2xl">
+          <TabsContent value="assistant" class="mt-0 flex justify-center">
+            <form @submit.prevent="handleChatSubmit" class="flex gap-2 max-w-2xl w-full">
               <Input
                 v-model="chatMessage"
                 type="text"

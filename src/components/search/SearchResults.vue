@@ -153,10 +153,8 @@ const calculateTotalPrice = (hotelPrice: string, flightPrice: number): string =>
         <div v-if="sortedHotels.length > 0" class="space-y-3">
           <HotelCard
             v-for="(room, index) in sortedHotels"
-            :key="`${room.hotel.name}-${room.roomName}-${index}`"
-            :room-name="room.roomName"
-            :price="room.price"
-            :hotel="room.hotel"
+            :key="`${room.hotel.code}-${room.roomCode}-${index}`"
+            :room="room"
           />
         </div>
         <div v-else class="text-center text-muted-foreground py-8">

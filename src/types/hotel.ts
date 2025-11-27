@@ -3,26 +3,16 @@
  * These interfaces match the structure returned by the hotel search API
  */
 
-export interface Coordinates {
-  latitude: number
-  longitude: number
-}
-
 export interface HotelLocation {
   city: string
-  coordinates: Coordinates
-}
-
-export interface HotelContact {
-  phone: string
-  email: string
+  country: string
 }
 
 export interface HotelInfo {
+  code: string
   name: string
   stars: number
   location: HotelLocation
-  contact: HotelContact
 }
 
 export interface RoomPrice {
@@ -30,10 +20,59 @@ export interface RoomPrice {
   currency: string
 }
 
+export interface BedInfo {
+  type: string
+  count: number
+}
+
+export interface ServiceInfo {
+  code: string
+  description: string
+  type: string
+}
+
+export interface MealPlan {
+  code: string
+  description: string
+}
+
+export interface CancelPenaltyValue {
+  value: string
+  decimals: number
+  currency: {
+    iso_currency: string
+    currency: string
+  }
+}
+
+export interface CancelPenalty {
+  valid_for_rate_plans: string[]
+  datetime_range: {
+    start: { seconds: string; nanos: number }
+    end: { seconds: string; nanos: number }
+  }
+  value: CancelPenaltyValue
+  description: string
+}
+
+export interface CancellationPolicy {
+  complex_cancel_penalties: {
+    cancel_penalties: CancelPenalty[]
+  }
+  policy_type: string
+}
+
 export interface RoomResult {
+  roomCode: string
   roomName: string
+  originalRoomName: string
   price: RoomPrice
+  remainingUnits: number
   hotel: HotelInfo
+  mealPlan: MealPlan
+  beds: BedInfo[]
+  services: ServiceInfo[]
+  cancellationPolicy: CancellationPolicy
 }
 
 export interface HotelSearchResponse {
@@ -43,10 +82,7 @@ export interface HotelSearchResponse {
 
 /**
  * Props interface for HotelCard component
- * Derived from RoomResult for easier component usage
  */
 export interface HotelCardProps {
-  roomName: string
-  price: RoomPrice
-  hotel: HotelInfo
+  room: RoomResult
 }

@@ -67,21 +67,23 @@ watch(flightDateType, () => {
 </script>
 
 <template>
-  <div class="w-full">
-    <Tabs v-model="activeTab" class="w-full">
-      <form class="flex flex-col gap-3 xl:flex-row xl:items-end xl:flex-wrap" @submit.prevent="handleSubmit">
-        <TabsList class="grid grid-cols-3 w-fit">
-          <TabsTrigger
-            v-for="tab in SEARCH_TABS"
-            :key="tab.id"
-            :value="tab.id"
-            class="text-xs px-3"
-          >
-            {{ tab.label }}
-          </TabsTrigger>
-        </TabsList>
+  <div class="w-full flex justify-center">
+    <Tabs v-model="activeTab" class="w-full max-w-7xl">
+      <form class="flex flex-col gap-3 xl:flex-row xl:items-end xl:flex-wrap xl:justify-center" @submit.prevent="handleSubmit">
+        <div class="flex justify-center">
+          <TabsList class="grid grid-cols-3 w-fit">
+            <TabsTrigger
+              v-for="tab in SEARCH_TABS"
+              :key="tab.id"
+              :value="tab.id"
+              class="text-xs px-3"
+            >
+              {{ tab.label }}
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-        <div class="flex items-end gap-3 flex-wrap flex-1">
+        <div class="flex items-end gap-3 flex-wrap justify-center">
         <div v-if="activeTab !== 'hotel'" class="flex flex-col gap-1">
           <label class="text-xs font-medium text-muted-foreground">Origin</label>
           <Input

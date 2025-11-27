@@ -51,7 +51,7 @@ const flightFilters = reactive({
           <h3 class="font-semibold">Sort By</h3>
         </div>
         <NativeSelect v-model="sortBy" class="w-full">
-          <NativeSelectOption value="default">Default</NativeSelectOption>
+          <NativeSelectOption value="default">Recommended</NativeSelectOption>
           <NativeSelectOption value="price-asc">Price: Low to High</NativeSelectOption>
           <NativeSelectOption value="price-desc">Price: High to Low</NativeSelectOption>
         </NativeSelect>

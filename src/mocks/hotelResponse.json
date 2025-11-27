@@ -2,223 +2,221 @@
   "searchId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "rooms": [
     {
-      "roomName": "Double Room Standard",
+      "roomCode": "DBL-STD",
+      "roomName": "Standard Double Room",
+      "originalRoomName": "Double Standard",
       "price": {
-        "total": "450.00",
+        "total": "192",
         "currency": "EUR"
       },
+      "remainingUnits": 10,
       "hotel": {
-        "name": "Grand Hotel Paradise",
-        "stars": 4,
-        "location": {
-          "city": "Madrid",
-          "coordinates": {
-            "latitude": 40.4168,
-            "longitude": -3.7038
-          }
-        },
-        "contact": {
-          "phone": "+34 91 123 4567",
-          "email": "info@grandhotelparadise.com"
-        }
-      }
-    },
-    {
-      "roomName": "Superior Suite with Balcony",
-      "price": {
-        "total": "780.00",
-        "currency": "EUR"
-      },
-      "hotel": {
-        "name": "Grand Hotel Paradise",
-        "stars": 4,
-        "location": {
-          "city": "Madrid",
-          "coordinates": {
-            "latitude": 40.4168,
-            "longitude": -3.7038
-          }
-        },
-        "contact": {
-          "phone": "+34 91 123 4567",
-          "email": "info@grandhotelparadise.com"
-        }
-      }
-    },
-    {
-      "roomName": "Single Room Economy",
-      "price": {
-        "total": "195.00",
-        "currency": "EUR"
-      },
-      "hotel": {
-        "name": "Hotel Comfort Inn",
+        "code": "ES-IBZ-002",
+        "name": "Hotel Garbi Ibiza",
         "stars": 3,
         "location": {
-          "city": "Madrid",
-          "coordinates": {
-            "latitude": 40.4200,
-            "longitude": -3.7100
-          }
-        },
-        "contact": {
-          "phone": "+34 91 234 5678",
-          "email": "reservas@comfortinn.es"
+          "city": "Ibiza",
+          "country": "ES"
         }
+      },
+      "mealPlan": {
+        "code": "MEAL_PLAN_CODE_RO",
+        "description": "Room Only"
+      },
+      "beds": [
+        {
+          "type": "DOUBLE",
+          "count": 1
+        }
+      ],
+      "services": [
+        {
+          "code": "WIFI",
+          "description": "Free WiFi",
+          "type": "SERVICE_AVAILABILITY_TYPE_INCLUDED"
+        }
+      ],
+      "cancellationPolicy": {
+        "complex_cancel_penalties": {
+          "cancel_penalties": []
+        },
+        "policy_type": "complex_cancel_penalties"
       }
     },
     {
-      "roomName": "Deluxe King Room",
+      "roomCode": "SUI-DLX",
+      "roomName": "Deluxe Suite Sea View",
+      "originalRoomName": "Suite Deluxe Vista Mar",
       "price": {
-        "total": "1250.00",
+        "total": "450",
         "currency": "EUR"
       },
+      "remainingUnits": 3,
       "hotel": {
-        "name": "The Ritz Madrid",
+        "code": "ES-MAD-001",
+        "name": "Grand Hotel Paradise",
         "stars": 5,
         "location": {
           "city": "Madrid",
-          "coordinates": {
-            "latitude": 40.4145,
-            "longitude": -3.6920
-          }
-        },
-        "contact": {
-          "phone": "+34 91 345 6789",
-          "email": "reservations@ritzmadrid.com"
+          "country": "ES"
         }
+      },
+      "mealPlan": {
+        "code": "MEAL_PLAN_CODE_BB",
+        "description": "Bed & Breakfast"
+      },
+      "beds": [
+        {
+          "type": "KING",
+          "count": 1
+        }
+      ],
+      "services": [
+        {
+          "code": "WIFI",
+          "description": "Free WiFi",
+          "type": "SERVICE_AVAILABILITY_TYPE_INCLUDED"
+        },
+        {
+          "code": "PARKING",
+          "description": "Free Parking",
+          "type": "SERVICE_AVAILABILITY_TYPE_INCLUDED"
+        }
+      ],
+      "cancellationPolicy": {
+        "complex_cancel_penalties": {
+          "cancel_penalties": []
+        },
+        "policy_type": "complex_cancel_penalties"
       }
     },
     {
-      "roomName": "Twin Room with City View",
+      "roomCode": "TWN-ECO",
+      "roomName": "Economy Twin Room",
+      "originalRoomName": "Twin Economy",
       "price": {
-        "total": "320.00",
+        "total": "89",
         "currency": "EUR"
       },
+      "remainingUnits": 15,
       "hotel": {
+        "code": "ES-BCN-003",
         "name": "Barcelona Beach Hotel",
         "stars": 4,
         "location": {
           "city": "Barcelona",
-          "coordinates": {
-            "latitude": 41.3851,
-            "longitude": 2.1734
-          }
-        },
-        "contact": {
-          "phone": "+34 93 456 7890",
-          "email": "info@barcelonabeach.com"
+          "country": "ES"
         }
+      },
+      "mealPlan": {
+        "code": "MEAL_PLAN_CODE_HB",
+        "description": "Half Board"
+      },
+      "beds": [
+        {
+          "type": "TWIN",
+          "count": 2
+        }
+      ],
+      "services": [
+        {
+          "code": "WIFI",
+          "description": "Free WiFi",
+          "type": "SERVICE_AVAILABILITY_TYPE_INCLUDED"
+        }
+      ],
+      "cancellationPolicy": {
+        "complex_cancel_penalties": {
+          "cancel_penalties": []
+        },
+        "policy_type": "complex_cancel_penalties"
       }
     },
     {
-      "roomName": "Family Suite",
+      "roomCode": "FAM-STD",
+      "roomName": "Family Room",
+      "originalRoomName": "Habitación Familiar",
       "price": {
-        "total": "520.00",
+        "total": "275",
         "currency": "EUR"
       },
+      "remainingUnits": 2,
       "hotel": {
-        "name": "Barcelona Beach Hotel",
-        "stars": 4,
-        "location": {
-          "city": "Barcelona",
-          "coordinates": {
-            "latitude": 41.3851,
-            "longitude": 2.1734
-          }
-        },
-        "contact": {
-          "phone": "+34 93 456 7890",
-          "email": "info@barcelonabeach.com"
-        }
-      }
-    },
-    {
-      "roomName": "Budget Double Room",
-      "price": {
-        "total": "89.00",
-        "currency": "EUR"
-      },
-      "hotel": {
+        "code": "ES-SEV-004",
         "name": "Hostal El Centro",
         "stars": 2,
         "location": {
           "city": "Sevilla",
-          "coordinates": {
-            "latitude": 37.3891,
-            "longitude": -5.9845
-          }
-        },
-        "contact": {
-          "phone": "+34 95 567 8901",
-          "email": "hostalcentro@gmail.com"
+          "country": "ES"
         }
+      },
+      "mealPlan": {
+        "code": "MEAL_PLAN_CODE_RO",
+        "description": "Room Only"
+      },
+      "beds": [
+        {
+          "type": "DOUBLE",
+          "count": 1
+        },
+        {
+          "type": "SINGLE",
+          "count": 2
+        }
+      ],
+      "services": [],
+      "cancellationPolicy": {
+        "complex_cancel_penalties": {
+          "cancel_penalties": []
+        },
+        "policy_type": "complex_cancel_penalties"
       }
     },
     {
+      "roomCode": "PEN-LUX",
       "roomName": "Penthouse Suite",
+      "originalRoomName": "Suite Penthouse",
       "price": {
-        "total": "2100.00",
+        "total": "1200",
         "currency": "EUR"
       },
+      "remainingUnits": 1,
       "hotel": {
+        "code": "ES-BCN-005",
         "name": "Hotel Arts Barcelona",
         "stars": 5,
         "location": {
           "city": "Barcelona",
-          "coordinates": {
-            "latitude": 41.3879,
-            "longitude": 2.1942
-          }
-        },
-        "contact": {
-          "phone": "+34 93 221 1000",
-          "email": "reservations@hotelartsbarcelona.com"
+          "country": "ES"
         }
-      }
-    },
-    {
-      "roomName": "Standard Room",
-      "price": {
-        "total": "150.00",
-        "currency": "EUR"
       },
-      "hotel": {
-        "name": "Hotel Valencia Center",
-        "stars": 3,
-        "location": {
-          "city": "Valencia",
-          "coordinates": {
-            "latitude": 39.4699,
-            "longitude": -0.3763
-          }
-        },
-        "contact": {
-          "phone": "+34 96 678 9012",
-          "email": "info@valenciacenter.com"
-        }
-      }
-    },
-    {
-      "roomName": "Junior Suite Sea View",
-      "price": {
-        "total": "680.00",
-        "currency": "EUR"
+      "mealPlan": {
+        "code": "MEAL_PLAN_CODE_FB",
+        "description": "Full Board"
       },
-      "hotel": {
-        "name": "Melia Palma Marina",
-        "stars": 4,
-        "location": {
-          "city": "Palma de Mallorca",
-          "coordinates": {
-            "latitude": 39.5696,
-            "longitude": 2.6502
-          }
-        },
-        "contact": {
-          "phone": "+34 97 789 0123",
-          "email": "palma.marina@melia.com"
+      "beds": [
+        {
+          "type": "KING",
+          "count": 1
         }
+      ],
+      "services": [
+        {
+          "code": "WIFI",
+          "description": "Free WiFi",
+          "type": "SERVICE_AVAILABILITY_TYPE_INCLUDED"
+        },
+        {
+          "code": "SPA",
+          "description": "Spa Access",
+          "type": "SERVICE_AVAILABILITY_TYPE_INCLUDED"
+        }
+      ],
+      "cancellationPolicy": {
+        "complex_cancel_penalties": {
+          "cancel_penalties": []
+        },
+        "policy_type": "complex_cancel_penalties"
       }
     }
   ]
