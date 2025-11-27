@@ -27,6 +27,10 @@ const {
   getFormData
 } = useBookingForm()
 
+const emit = defineEmits<{
+  'update:searchType': [value: 'hotel' | 'flights' | 'hotel+flights']
+}>()
+
 const { errors, clearErrors, clearError, validateForm } = useSearchValidation()
 const { generatePrompt, sendPrompt } = usePromptGenerator()
 
@@ -43,9 +47,10 @@ const handleSubmit = (): void => {
   sendPrompt(prompt)
 }
 
-watch(activeTab, () => {
+watch(activeTab, (newTab) => {
   clearErrors()
-})
+  emit('update:searchType', newTab)
+}, { immediate: true })
 
 watch(flightDateType, () => {
   clearError('dates')

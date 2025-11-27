@@ -5,12 +5,14 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import SearchFormInline from '@/components/search/SearchFormInline.vue'
+import SearchFilters from '@/components/search/SearchFilters.vue'
 import { usePromptGenerator } from '@/composables/usePromptGenerator'
 
 const { sendPrompt } = usePromptGenerator()
 
 const searchMode = ref<'assistant' | 'classic'>('assistant')
 const chatMessage = ref<string>('')
+const searchType = ref<'hotel' | 'flights' | 'hotel+flights'>('hotel+flights')
 
 const handleChatSubmit = (): void => {
   if (!chatMessage.value.trim()) return
@@ -52,15 +54,21 @@ const handleChatSubmit = (): void => {
           </TabsContent>
 
           <TabsContent value="classic" class="mt-0">
-            <SearchFormInline />
+            <SearchFormInline @update:search-type="searchType = $event" />
           </TabsContent>
         </Tabs>
       </div>
     </header>
 
     <main class="w-full px-4 py-6">
-      <div class="text-center text-muted-foreground">
-        <p class="text-lg">Search results will appear here</p>
+      <div class="flex gap-6">
+        <SearchFilters :search-type="searchType" class="border-r pr-6" />
+
+        <div class="flex-1">
+          <div class="text-center text-muted-foreground">
+            <p class="text-lg">Search results will appear here</p>
+          </div>
+        </div>
       </div>
     </main>
   </div>
