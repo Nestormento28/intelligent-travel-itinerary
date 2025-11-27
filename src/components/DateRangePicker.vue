@@ -4,7 +4,6 @@ import { CalendarIcon } from 'lucide-vue-next'
 import { RangeCalendar } from '@/components/ui/range-calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { CalendarDate, DateFormatter, getLocalTimeZone, today } from '@internationalized/date'
 
@@ -118,32 +117,26 @@ watch(numberOfNights, (nights) => {
 </script>
 
 <template>
-  <div class="flex gap-2">
-    <Popover v-model:open="open">
-      <PopoverTrigger as-child>
-        <Button
-          variant="outline"
-          :class="cn(
-            'w-full justify-start text-left font-normal',
-            !dateRange.start && 'text-muted-foreground',
-            error && 'border-destructive'
-          )"
-        >
-          <CalendarIcon class="mr-2 h-4 w-4" />
-          {{ formattedDateRange }}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent class="w-auto p-0" align="start">
-        <RangeCalendar
-          v-model="dateRange"
-          :number-of-months="2"
-          :min-value="minDate"
-        />
-      </PopoverContent>
-    </Popover>
-
-    <Badge v-if="numberOfNights > 0" variant="secondary" class="self-center whitespace-nowrap">
-      {{ numberOfNights }} {{ numberOfNights === 1 ? 'night' : 'nights' }}
-    </Badge>
-  </div>
+  <Popover v-model:open="open">
+    <PopoverTrigger as-child>
+      <Button
+        variant="outline"
+        :class="cn(
+          'w-full justify-start text-left font-normal',
+          !dateRange.start && 'text-muted-foreground',
+          error && 'border-destructive'
+        )"
+      >
+        <CalendarIcon class="mr-2 h-4 w-4" />
+        {{ formattedDateRange }}
+      </Button>
+    </PopoverTrigger>
+    <PopoverContent class="w-auto p-0" align="start">
+      <RangeCalendar
+        v-model="dateRange"
+        :number-of-months="2"
+        :min-value="minDate"
+      />
+    </PopoverContent>
+  </Popover>
 </template>

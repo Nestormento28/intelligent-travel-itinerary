@@ -38,6 +38,7 @@ const maxChars = VALIDATION_RULES.maxExtraInfoChars
       rows="2"
       placeholder="Hotel with spa, first class flight, near to the beach..."
       class="resize-none"
+      :aria-invalid="!!error"
     />
     <div class="flex justify-between text-xs">
       <p v-if="error" class="text-destructive">{{ error }}</p>

@@ -33,6 +33,7 @@ const guests = computed({
       type="number"
       :min="GUESTS_CONFIG.min"
       :max="GUESTS_CONFIG.max"
+      :aria-invalid="!!error"
     />
     <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
   </div>

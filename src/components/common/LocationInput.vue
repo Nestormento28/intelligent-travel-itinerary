@@ -35,6 +35,7 @@ const value = computed({
       v-model="value"
       type="text"
       :placeholder="placeholder"
+      :aria-invalid="!!error"
     />
     <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
   </div>

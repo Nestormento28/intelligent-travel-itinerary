@@ -15,13 +15,15 @@ interface Props {
   singleDate?: string | null
   rangeValue?: Array<string> | null
   error?: string
+  hideRadio?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   flightDateType: 'single',
   singleDate: null,
   rangeValue: null,
-  error: ''
+  error: '',
+  hideRadio: false
 })
 
 const emit = defineEmits<{
@@ -90,19 +92,21 @@ watch(singleDateValue, (val) => {
 </script>
 
 <template>
-  <div class="space-y-3">
-    <Label>Flight Date</Label>
+  <div :class="hideRadio ? '' : 'space-y-3'">
+    <template v-if="!hideRadio">
+      <Label>Flight Date</Label>
 
-    <RadioGroup v-model="dateType" class="flex gap-4">
-      <div class="flex items-center space-x-2">
-        <RadioGroupItem id="one-way" value="single" />
-        <Label for="one-way" class="cursor-pointer font-normal">One way</Label>
-      </div>
-      <div class="flex items-center space-x-2">
-        <RadioGroupItem id="round-trip" value="range" />
-        <Label for="round-trip" class="cursor-pointer font-normal">Round trip</Label>
-      </div>
-    </RadioGroup>
+      <RadioGroup v-model="dateType" class="flex gap-4">
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem id="one-way" value="single" />
+          <Label for="one-way" class="cursor-pointer font-normal">One way</Label>
+        </div>
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem id="round-trip" value="range" />
+          <Label for="round-trip" class="cursor-pointer font-normal">Round trip</Label>
+        </div>
+      </RadioGroup>
+    </template>
 
     <div v-if="flightDateType === 'single'">
       <Popover v-model:open="open">
@@ -134,7 +138,7 @@ watch(singleDateValue, (val) => {
         @update:range="handleRangeUpdate"
       />
     </div>
-    <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
+    <p v-if="error && !hideRadio" class="text-sm text-destructive">{{ error }}</p>
   </div>
 </template>
 
