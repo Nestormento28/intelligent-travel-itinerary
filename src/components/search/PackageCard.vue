@@ -99,7 +99,7 @@ defineProps<Props>()
         </div>
 
         <!-- Price Section -->
-        <div class="flex flex-col items-end justify-center pl-4 border-l min-w-[140px]">
+        <div class="flex flex-col items-end justify-center pl-4 ml-4 border-l min-w-[140px]">
           <Badge variant="outline" class="mb-2">Package Deal</Badge>
           <div class="text-2xl font-bold">{{ totalPrice }} {{ roomPrice.currency }}</div>
           <div class="text-xs text-muted-foreground">Total price</div>

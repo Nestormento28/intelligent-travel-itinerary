@@ -113,6 +113,7 @@ const sendPrompt = async (prompt: string): Promise<void> => {
     if (typeof response === 'string') {
       plainTextResponse.value = response
       hotelResults.value = []
+      chatMessage.value = '' // Clear the input field
     } else {
       // It's a HotelSearchResponse object - check for new format with response.results
       if (response.response && Array.isArray(response.response.results)) {
@@ -124,6 +125,7 @@ const sendPrompt = async (prompt: string): Promise<void> => {
         hotelResults.value = []
       }
       plainTextResponse.value = null
+      chatMessage.value = '' // Clear the input field
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -192,8 +194,8 @@ onMounted(() => {
       </div>
     </header>
 
-    <main class="w-full px-4 py-6">
-      <div class="flex gap-6">
+    <main class="w-full px-8 py-6">
+      <div class="flex gap-6 max-w-[1600px] mx-auto">
         <SearchFilters
           :search-type="activeTab"
           v-model:sort-by="sortBy"
