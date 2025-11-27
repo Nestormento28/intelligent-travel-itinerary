@@ -63,7 +63,15 @@ const fetchHotelResults = async (prompt: string): Promise<HotelSearchResponse | 
       const data = JSON.parse(text)
       console.log('Parsed JSON data:', data)
 
-      // Check if it's a valid HotelSearchResponse with rooms array
+      // Check if it's the new API response format with response.results
+      if (data && typeof data === 'object' && data.response &&
+          typeof data.response === 'object' &&
+          'results' in data.response &&
+          Array.isArray(data.response.results)) {
+        return data
+      }
+
+      // Check if it's a valid HotelSearchResponse with rooms array (old format)
       if (data && typeof data === 'object' && 'rooms' in data && Array.isArray(data.rooms)) {
         return data
       }
@@ -106,8 +114,15 @@ const sendPrompt = async (prompt: string): Promise<void> => {
       plainTextResponse.value = response
       hotelResults.value = []
     } else {
-      // It's a HotelSearchResponse object
-      hotelResults.value = response.rooms || []
+      // It's a HotelSearchResponse object - check for new format with response.results
+      if (response.response && Array.isArray(response.response.results)) {
+        hotelResults.value = response.response.results
+      } else if ('rooms' in response && Array.isArray(response.rooms)) {
+        // Old format with rooms array
+        hotelResults.value = response.rooms || []
+      } else {
+        hotelResults.value = []
+      }
       plainTextResponse.value = null
     }
   } catch (error) {

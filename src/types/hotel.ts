@@ -5,18 +5,24 @@
 
 export interface HotelLocation {
   city: string
+  region: string | null
   country: string
+  address: string | null
+  postalCode: string | null
+  coordinates: unknown | null
 }
 
 export interface HotelInfo {
   code: string
   name: string
   stars: number
+  chain: string | null
   location: HotelLocation
+  contact: unknown | null
 }
 
-export interface RoomPrice {
-  total: string
+export interface PriceAmount {
+  amount: number
   currency: string
 }
 
@@ -31,53 +37,43 @@ export interface ServiceInfo {
   type: string
 }
 
-export interface MealPlan {
-  code: string
-  description: string
-}
-
-export interface CancelPenaltyValue {
-  value: string
-  decimals: number
-  currency: {
-    iso_currency: string
-    currency: string
-  }
-}
-
-export interface CancelPenalty {
-  valid_for_rate_plans: string[]
-  datetime_range: {
-    start: { seconds: string; nanos: number }
-    end: { seconds: string; nanos: number }
-  }
-  value: CancelPenaltyValue
-  description: string
-}
-
-export interface CancellationPolicy {
-  complex_cancel_penalties: {
-    cancel_penalties: CancelPenalty[]
-  }
-  policy_type: string
+export interface CancellationPenalty {
+  from: string
+  to: string
+  amount: number
+  currency: string
 }
 
 export interface RoomResult {
+  resultId: string
+  hotelCode: string
+  hotel: HotelInfo
   roomCode: string
   roomName: string
   originalRoomName: string
-  price: RoomPrice
-  remainingUnits: number
-  hotel: HotelInfo
-  mealPlan: MealPlan
+  totalPrice: PriceAmount
+  nights: number
+  pricePerNight: number
+  refundable: boolean
+  cancellationDeadline: string | null
+  cancellationPenalties: CancellationPenalty[]
+  bookability: string
+  mealPlan: string
+  mealPlanDescription: string
   beds: BedInfo[]
+  remainingUnits: number
   services: ServiceInfo[]
-  cancellationPolicy: CancellationPolicy
 }
 
 export interface HotelSearchResponse {
-  searchId: string
-  rooms: RoomResult[]
+  sessionId: string
+  response: {
+    success: boolean
+    searchId: string
+    expiresAt: string | null
+    resultsCount: number
+    results: RoomResult[]
+  }
 }
 
 /**

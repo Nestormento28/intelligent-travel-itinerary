@@ -38,9 +38,9 @@ const sortedHotels = computed(() => {
   // Apply sorting
   switch (props.sortBy) {
     case 'price-asc':
-      return filtered.sort((a, b) => parseFloat(a.price.total) - parseFloat(b.price.total))
+      return filtered.sort((a, b) => a.totalPrice.amount - b.totalPrice.amount)
     case 'price-desc':
-      return filtered.sort((a, b) => parseFloat(b.price.total) - parseFloat(a.price.total))
+      return filtered.sort((a, b) => b.totalPrice.amount - a.totalPrice.amount)
     default:
       return filtered
   }
@@ -103,9 +103,8 @@ const demoFlightForPackage = {
 }
 
 // Compute total price (hotel + demo flight)
-const calculateTotalPrice = (hotelPrice: string, flightPrice: number): string => {
-  const hotelAmount = parseFloat(hotelPrice)
-  const total = hotelAmount + flightPrice
+const calculateTotalPrice = (hotelPrice: number, flightPrice: number): string => {
+  const total = hotelPrice + flightPrice
   return total.toFixed(2)
 }
 </script>
@@ -123,8 +122,8 @@ const calculateTotalPrice = (hotelPrice: string, flightPrice: number): string =>
             :flight="demoFlightForPackage"
             :hotel="room.hotel"
             :room-name="room.roomName"
-            :room-price="room.price"
-            :total-price="calculateTotalPrice(room.price.total, demoFlightForPackage.price)"
+            :room-price="room.totalPrice"
+            :total-price="calculateTotalPrice(room.totalPrice.amount, demoFlightForPackage.price)"
           />
         </div>
         <div v-else class="text-center text-muted-foreground py-8">

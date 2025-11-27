@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import type { HotelInfo, RoomPrice } from '@/types'
+import type { HotelInfo, PriceAmount } from '@/types'
 
 interface FlightInfo {
   airline: string
@@ -21,7 +21,7 @@ interface Props {
   flight: FlightInfo
   hotel: HotelInfo
   roomName: string
-  roomPrice: RoomPrice
+  roomPrice: PriceAmount
   totalPrice: string
 }
 
@@ -33,7 +33,7 @@ defineProps<Props>()
     class="overflow-hidden"
     :data-stars="hotel.stars"
     :data-city="hotel.location.city"
-    :data-price="roomPrice.total"
+    :data-price="roomPrice.amount"
   >
     <CardContent class="!py-4 !px-4">
       <div class="flex items-center justify-between">

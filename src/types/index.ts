@@ -3,12 +3,10 @@ export type { SearchTab, BudgetConfig, GuestsConfig, ValidationRules, ErrorMessa
 export type {
   HotelLocation,
   HotelInfo,
-  RoomPrice,
+  PriceAmount,
   BedInfo,
   ServiceInfo,
-  MealPlan,
-  CancelPenalty,
-  CancellationPolicy,
+  CancellationPenalty,
   RoomResult,
   HotelSearchResponse,
   HotelCardProps

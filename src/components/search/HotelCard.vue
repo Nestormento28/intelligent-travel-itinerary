@@ -13,11 +13,10 @@ interface Props {
 const props = defineProps<Props>()
 
 const formattedPrice = computed(() => {
-  const amount = parseFloat(props.room.price.total)
   return new Intl.NumberFormat('es-ES', {
     style: 'currency',
-    currency: props.room.price.currency
-  }).format(amount)
+    currency: props.room.totalPrice.currency
+  }).format(props.room.totalPrice.amount)
 })
 
 const starsArray = computed(() => Array.from({ length: props.room.hotel.stars }, (_, i) => i + 1))
@@ -47,8 +46,8 @@ const isLowAvailability = computed(() => {
     class="overflow-hidden"
     :data-stars="room.hotel.stars"
     :data-city="room.hotel.location.city"
-    :data-price="room.price.total"
-    :data-meal-plan="room.mealPlan.code"
+    :data-price="room.totalPrice.amount"
+    :data-meal-plan="room.mealPlan"
   >
     <CardContent class="flex items-stretch justify-between !py-4 !px-4">
       <!-- Left: Hotel & Room Info -->
@@ -86,7 +85,7 @@ const isLowAvailability = computed(() => {
         <div class="flex items-center gap-3 text-sm">
           <div class="flex items-center gap-1 text-muted-foreground">
             <UtensilsCrossed class="h-3 w-3" />
-            {{ room.mealPlan.description }}
+            {{ room.mealPlanDescription }}
           </div>
           <div v-if="hasWifi" class="flex items-center gap-1 text-muted-foreground">
             <Wifi class="h-3 w-3" />
