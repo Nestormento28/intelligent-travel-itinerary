@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Label } from '@/components/ui/label'
@@ -9,11 +10,13 @@ import LocationInput from '@/components/common/LocationInput.vue'
 import ExtraInfoInput from '@/components/common/ExtraInfoInput.vue'
 import FlightDatePicker from '@/components/search/FlightDatePicker.vue'
 import DateRangePicker from '@/components/DateRangePicker.vue'
-import { useBookingForm } from '@/composables/useBookingForm'
+import { useSearchStore } from '@/composables/useSearchStore'
 import { useSearchValidation } from '@/composables/useSearchValidation'
 import { usePromptGenerator } from '@/composables/usePromptGenerator'
 import { SEARCH_TABS } from '@/constants/search'
 import type { DateRangeData } from '@/types'
+
+const router = useRouter()
 
 const {
   activeTab,
@@ -26,11 +29,12 @@ const {
   budget,
   guests,
   extraInfo,
-  getFormData
-} = useBookingForm()
+  getFormData,
+  setSearchData
+} = useSearchStore()
 
 const { errors, clearErrors, clearError, validateForm } = useSearchValidation()
-const { generatePrompt, sendPrompt } = usePromptGenerator()
+const { generatePrompt } = usePromptGenerator()
 
 const handleRangeUpdate = (range: DateRangeData): void => {
   dateRangeData.value = range
@@ -42,7 +46,8 @@ const handleSubmit = (): void => {
     return
   }
   const prompt = generatePrompt(formData)
-  sendPrompt(prompt)
+  setSearchData({ searchMode: 'classic', generatedPrompt: prompt })
+  router.push('/search-results')
 }
 
 const getSubmitButtonText = (): string => {

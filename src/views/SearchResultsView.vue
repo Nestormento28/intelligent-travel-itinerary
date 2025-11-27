@@ -1,24 +1,34 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted } from 'vue'
 import { MessageSquare, SlidersHorizontal } from 'lucide-vue-next'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import SearchFormInline from '@/components/search/SearchFormInline.vue'
 import SearchFilters from '@/components/search/SearchFilters.vue'
-import { usePromptGenerator } from '@/composables/usePromptGenerator'
+import { useSearchStore } from '@/composables/useSearchStore'
 
-const { sendPrompt } = usePromptGenerator()
+const { searchMode, chatMessage, activeTab, generatedPrompt, setSearchData } = useSearchStore()
 
-const searchMode = ref<'assistant' | 'classic'>('assistant')
-const chatMessage = ref<string>('')
-const searchType = ref<'hotel' | 'flights' | 'hotel+flights'>('hotel+flights')
+const sendPrompt = (prompt: string): void => {
+  console.log('Sending prompt:', prompt)
+}
 
 const handleChatSubmit = (): void => {
   if (!chatMessage.value.trim()) return
+  setSearchData({ generatedPrompt: chatMessage.value })
   sendPrompt(chatMessage.value)
-  chatMessage.value = ''
 }
+
+const handleClassicSearch = (prompt: string): void => {
+  sendPrompt(prompt)
+}
+
+onMounted(() => {
+  if (generatedPrompt.value) {
+    sendPrompt(generatedPrompt.value)
+  }
+})
 </script>
 
 <template>
@@ -54,7 +64,7 @@ const handleChatSubmit = (): void => {
           </TabsContent>
 
           <TabsContent value="classic" class="mt-0">
-            <SearchFormInline @update:search-type="searchType = $event" />
+            <SearchFormInline @search="handleClassicSearch" />
           </TabsContent>
         </Tabs>
       </div>
@@ -62,7 +72,7 @@ const handleChatSubmit = (): void => {
 
     <main class="w-full px-4 py-6">
       <div class="flex gap-6">
-        <SearchFilters :search-type="searchType" class="border-r pr-6" />
+        <SearchFilters :search-type="activeTab" class="border-r pr-6" />
 
         <div class="flex-1">
           <div class="text-center text-muted-foreground">

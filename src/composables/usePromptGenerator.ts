@@ -45,12 +45,7 @@ export function usePromptGenerator() {
         return `I want to book a hotel and flight from ${origin} to ${destination} from ${dateRangeData.startDate} to ${dateRangeData.endDate} for ${guestText} with ${budgetText}${extraInfoText}`
     }
 
-    const sendPrompt = (prompt: string): void => {
-        console.log(prompt)
-    }
-
     return {
-        generatePrompt,
-        sendPrompt
+        generatePrompt
     }
 }

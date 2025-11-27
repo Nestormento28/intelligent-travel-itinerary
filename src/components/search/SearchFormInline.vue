@@ -8,11 +8,15 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 import DateRangePicker from '@/components/DateRangePicker.vue'
 import FlightDatePicker from '@/components/search/FlightDatePicker.vue'
-import { useBookingForm } from '@/composables/useBookingForm'
+import { useSearchStore } from '@/composables/useSearchStore'
 import { useSearchValidation } from '@/composables/useSearchValidation'
 import { usePromptGenerator } from '@/composables/usePromptGenerator'
 import { SEARCH_TABS, BUDGET_CONFIG, GUESTS_CONFIG } from '@/constants/search'
 import type { DateRangeData } from '@/types'
+
+const emit = defineEmits<{
+  'search': [prompt: string]
+}>()
 
 const {
   activeTab,
@@ -24,15 +28,12 @@ const {
   singleFlightDate,
   budget,
   guests,
-  getFormData
-} = useBookingForm()
-
-const emit = defineEmits<{
-  'update:searchType': [value: 'hotel' | 'flights' | 'hotel+flights']
-}>()
+  getFormData,
+  setSearchData
+} = useSearchStore()
 
 const { errors, clearErrors, clearError, validateForm } = useSearchValidation()
-const { generatePrompt, sendPrompt } = usePromptGenerator()
+const { generatePrompt } = usePromptGenerator()
 
 const handleRangeUpdate = (range: DateRangeData): void => {
   dateRangeData.value = range
@@ -44,13 +45,13 @@ const handleSubmit = (): void => {
     return
   }
   const prompt = generatePrompt(formData)
-  sendPrompt(prompt)
+  setSearchData({ generatedPrompt: prompt })
+  emit('search', prompt)
 }
 
-watch(activeTab, (newTab) => {
+watch(activeTab, () => {
   clearErrors()
-  emit('update:searchType', newTab)
-}, { immediate: true })
+})
 
 watch(flightDateType, () => {
   clearError('dates')

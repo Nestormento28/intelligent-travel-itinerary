@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import ChatInput from '@/components/search/ChatInput.vue'
 import SearchForm from '@/components/search/SearchForm.vue'
-import { usePromptGenerator } from '@/composables/usePromptGenerator'
+import { useSearchStore } from '@/composables/useSearchStore'
 
-const { sendPrompt } = usePromptGenerator()
-const chatMessage = ref<string>('')
+const router = useRouter()
+const { chatMessage, setSearchData } = useSearchStore()
 
 const handleChatSubmit = (): void => {
   if (!chatMessage.value.trim()) return
-  sendPrompt(chatMessage.value)
-  chatMessage.value = ''
+  setSearchData({ searchMode: 'assistant', generatedPrompt: chatMessage.value })
+  router.push('/search-results')
 }
 </script>
 
