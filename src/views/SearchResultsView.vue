@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { MessageSquare, SlidersHorizontal } from 'lucide-vue-next'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import SearchFormInline from '@/components/search/SearchFormInline.vue'
 import SearchFilters from '@/components/search/SearchFilters.vue'
+import SearchResults from '@/components/search/SearchResults.vue'
 import { useSearchStore } from '@/composables/useSearchStore'
 
 const { searchMode, chatMessage, activeTab, generatedPrompt, setSearchData } = useSearchStore()
 
+const hasSearched = ref(false)
+
 const sendPrompt = (prompt: string): void => {
   console.log('Sending prompt:', prompt)
+  hasSearched.value = true
 }
 
 const handleChatSubmit = (): void => {
@@ -75,7 +79,8 @@ onMounted(() => {
         <SearchFilters :search-type="activeTab" class="border-r pr-6" />
 
         <div class="flex-1">
-          <div class="text-center text-muted-foreground">
+          <SearchResults v-if="hasSearched" :search-type="activeTab" />
+          <div v-else class="text-center text-muted-foreground">
             <p class="text-lg">Search results will appear here</p>
           </div>
         </div>
